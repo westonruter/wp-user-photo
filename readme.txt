@@ -11,11 +11,11 @@ Allows a user to associate a photo with their account and for this photo to be d
     Allows users to associate photos with their accounts by accessing their "Your Profile" page. Admins may 
 add a user photo by accessing the "Edit User" page. Uploaded images are resized to fit the dimensions specified 
 on the options page; a thumbnail image is also generated. New template tags introduced are: 
-* <code>the_author_photo()</code>
-* <code>the_author_thumbnail()</code>
-* <code>comment_author_photo()</code>
-* <code>comment_author_thumbnail()</code>
-Uploaded images may be moderated by administrators.
+*   <code>the_author_photo()</code>
+*   <code>the_author_thumbnail()</code>
+*   <code>comment_author_photo()</code>
+*   <code>comment_author_thumbnail()</code>
+Uploaded images may be moderated by administrators via the "Edit User" page.
 
 == Todo ==
 1. Add a management page to allow admins to quickly approve/reject user photos.
