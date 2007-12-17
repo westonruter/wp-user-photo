@@ -5,7 +5,7 @@ Plugin Name: User Photo
 Plugin URI: http://wordpress.org/extend/plugins/user-photo/
 Description: Allows users to associate photos with their accounts by accessing their "Your Profile" page. Uploaded images are resized to fit the dimensions specified on the options page; a thumbnail image is also generated. New template tags introduced are: <code>the_author_photo</code>, <code>the_author_thumbnail</code>, <code>comment_author_photo</code>, and <code>comment_author_thumbnail</code>. Uploaded images may be moderated by administrators.
 Author: Weston Ruter
-Version: 0.7
+Version: 0.7.0.1
 Author URI: http://weston.ruter.net/
 
 */
@@ -25,6 +25,9 @@ $userphoto_validtypes = array(
 define('USERPHOTO_PENDING', 0);
 define('USERPHOTO_REJECTED', 1);
 define('USERPHOTO_APPROVED', 2);
+#define('USERPHOTO_PLUGINPATH', ABSPATH.'wp-content/plugins/user-photo');
+#define('USERPHOTO_PLUGINLINK', get_settings('siteurl') . 'wp-content/plugins/user-photo/');
+
 #define('USERPHOTO_DEFAULT_MAX_DIMENSION', 150);
 #define('USERPHOTO_DEFAULT_THUMB_DIMENSION', 80);
 #define('USERPHOTO_DEFAULT_JPEG_COMPRESSION', 90);
@@ -47,7 +50,7 @@ function get_the_author_photo($user_id = false){
 		else trigger_error("Unable to discern user ID.");
 	}
 	if(($userdata = get_userdata($user_id)) && $userdata->userphoto_image_file){
-		print '<img src="' . get_option('home') . '/wp-content/uploads/userphoto/' . $userdata->userphoto_image_file . '"';
+		print '<img src="' . get_option('siteurl') . '/wp-content/uploads/userphoto/' . $userdata->userphoto_image_file . '"';
 		print ' alt="' . htmlspecialchars($userdata->display_name) . '"';
 		print ' width="' . htmlspecialchars($userdata->userphoto_image_width) . '"';
 		print ' height="' . htmlspecialchars($userdata->userphoto_image_height) . '"';
@@ -65,7 +68,7 @@ function get_the_author_thumbnail($user_id){
 		else trigger_error("Unable to discern user ID.");
 	}
 	if(($userdata = get_userdata($user_id)) && $userdata->userphoto_thumb_file){
-		print '<img src="' . get_option('home') . '/wp-content/uploads/userphoto/' . $userdata->userphoto_thumb_file . '"';
+		print '<img src="' . get_option('siteurl') . '/wp-content/uploads/userphoto/' . $userdata->userphoto_thumb_file . '"';
 		print ' alt="' . htmlspecialchars($userdata->display_name) . '"';
 		print ' width="' . htmlspecialchars($userdata->userphoto_thumb_width) . '"';
 		print ' height="' . htmlspecialchars($userdata->userphoto_thumb_height) . '"';
@@ -271,13 +274,13 @@ add_action('delete_user', 'userphoto_delete_user');
 
 function userphoto_admin_useredit_head(){
 	if(preg_match("/(user-edit\.php|profile.php)$/", $_SERVER['PHP_SELF']))
-		print '<link rel="stylesheet" href="../wp-content/plugins/userphoto/admin.css" />';
+		print '<link rel="stylesheet" href="../wp-content/plugins/user-photo/admin.css" />';
 }
 function userphoto_admin_options_head(){
-	print '<link rel="stylesheet" href="../wp-content/plugins/userphoto/admin.css" />';
+	print '<link rel="stylesheet" href="../wp-content/plugins/user-photo/admin.css" />';
 }
 
-add_action('admin_head-options_page_userphoto/userphoto', 'userphoto_admin_options_head');
+add_action('admin_head-options_page_user-photo/user-photo', 'userphoto_admin_options_head');
 add_action('admin_head', 'userphoto_admin_useredit_head');
 #add_action('admin_head-userphoto', 'userphoto_admin_head');
 
@@ -325,10 +328,10 @@ function userphoto_display_selector_fieldset(){
         </script>
         <legend><?php echo $isSelf ? _e("Your Photo", 'userphoto') : _e("User Photo", 'userphoto') ?></legend>
         <?php if($profileuser->userphoto_image_file): ?>
-            <p class='image'><img src="<?php echo get_option('home') . '/wp-content/uploads/userphoto/' . $profileuser->userphoto_image_file . "?" . rand() ?>" alt="Full size image" /><br />
+            <p class='image'><img src="<?php echo get_option('siteurl') . '/wp-content/uploads/userphoto/' . $profileuser->userphoto_image_file . "?" . rand() ?>" alt="Full size image" /><br />
 			Full size
 			</p>
-			<p class='image'><img src="<?php echo get_option('home') . '/wp-content/uploads/userphoto/' . $profileuser->userphoto_thumb_file . "?" . rand() ?>" alt="Thumbnail image" /><br />
+			<p class='image'><img src="<?php echo get_option('siteurl') . '/wp-content/uploads/userphoto/' . $profileuser->userphoto_thumb_file . "?" . rand() ?>" alt="Thumbnail image" /><br />
 			Thumb
 			</p>
 			<hr />
