@@ -2,15 +2,11 @@
 
 /*
 Plugin Name: User Photo
-Plugin URI: 
+Plugin URI: http://wordpress.org/extend/plugins/user-photo/
 Description: Allows users to associate photos with their accounts by accessing their "Your Profile" page. Uploaded images are resized to fit the dimensions specified on the options page; a thumbnail image is also generated. New template tags introduced are: <code>the_author_photo</code>, <code>the_author_thumbnail</code>, <code>comment_author_photo</code>, and <code>comment_author_thumbnail</code>. Uploaded images may be moderated by administrators.
 Author: Weston Ruter
 Version: 0.7
 Author URI: http://weston.ruter.net/
-
-
-TODO:
-1. Add a management page to allow batch approvals
 
 */
 
