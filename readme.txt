@@ -19,11 +19,12 @@ on the options page; a thumbnail image is also generated. New template tags intr
 
 Uploaded images may be moderated by administrators via the "Edit User" page.
 
-## 2007-12-18: 0.7.0.1
+== Changelog ==
+= 2007-12-18: 0.7.0.1 =
 * Now using `siteurl` option instead of `home` option
 * Fixed the inclusion of the stylesheet for the options page
 
-## Todo
+== Todo ==
 1. Add a management page to allow admins to quickly approve/reject user photos.
 1. Add option so that when a photo is rejected, the user is notified.
 1. Restrict image types acceptable?
