@@ -3,15 +3,15 @@
 /*
 Plugin Name: User Photo
 Plugin URI: http://wordpress.org/extend/plugins/user-photo/
-Description: Allows users to associate photos with their accounts by accessing their "Your Profile" page. Uploaded images are resized to fit the dimensions specified on the options page; a thumbnail image is also generated. New template tags introduced are: <code>the_author_photo</code>, <code>the_author_thumbnail</code>, <code>comment_author_photo</code>, and <code>comment_author_thumbnail</code>. Uploaded images may be moderated by administrators.
+Description: Allows users to associate photos with their accounts by accessing their "Your Profile" page. Uploaded images are resized to fit the dimensions specified on the options page; a thumbnail image is also generated. New template tags introduced are: <code>userphoto_the_author_photo</code>, <code>userphoto_the_author_thumbnail</code>, <code>userphoto_comment_author_photo</code>, and <code>userphoto_comment_author_thumbnail</code>. Uploaded images may be moderated by administrators.
 Author: Weston Ruter
-Version: 0.7.0.1
+Version: 0.7.1
 Author URI: http://weston.ruter.net/
 
 */
 
 if(!function_exists('imagecopyresampled'))
-	trigger_error(__("Plugin not usable on this system because image resizing is not available, specifically the imagecopyresampled() and related functions.", 'userphoto'), E_USER_ERROR);
+	trigger_error(__("Plugin not usable on this system because image resizing is not available, specifically the imagecopyresampled() and related functions.", 'user-photo'), E_USER_ERROR);
 
 
 $userphoto_validtypes = array(
@@ -39,7 +39,7 @@ add_option("userphoto_thumb_dimension", 80);
 add_option("userphoto_admin_notified", 0); //0 means disable
 add_option("userphoto_level_moderated", 2); //Note: -1 means disable
 
-function get_the_author_photo($user_id = false){
+function userphoto_get_userphoto_the_author_photo($user_id = false){
 	global $authordata;
 	global $comment;
 	if(!$user_id){
@@ -57,7 +57,7 @@ function get_the_author_photo($user_id = false){
 		print " />";
 	}
 }
-function get_the_author_thumbnail($user_id){
+function userphoto_get_userphoto_the_author_thumbnail($user_id){
 	global $authordata;
 	global $comment;
 	if(!$user_id){
@@ -76,21 +76,21 @@ function get_the_author_thumbnail($user_id){
 	}
 }
 
-function comment_author_photo(){
+function userphoto_comment_author_photo(){
 	global $comment;
-	echo get_the_author_photo($comment->user_id);
+	echo userphoto_get_userphoto_the_author_photo($comment->user_id);
 }
-function comment_author_thumbnail(){
+function userphoto_comment_author_thumbnail(){
 	global $comment;
-	echo get_the_author_thumbnail($comment->user_id);
+	echo userphoto_get_userphoto_the_author_thumbnail($comment->user_id);
 }
-function the_author_photo(){
+function userphoto_the_author_photo(){
 	global $authordata;
-	echo get_the_author_photo($authordata->ID);
+	echo userphoto_get_userphoto_the_author_photo($authordata->ID);
 }
-function the_author_thumbnail(){
+function userphoto_the_author_thumbnail(){
 	global $authordata;
-	echo get_the_author_thumbnail($authordata->ID);
+	echo userphoto_get_userphoto_the_author_thumbnail($authordata->ID);
 }
 
 
@@ -108,7 +108,7 @@ function userphoto_profile_update($userID){
 			$thumbpath = ABSPATH . "/wp-content/uploads/userphoto/" . basename($userdata->userphoto_image_file);
 			
 			if(file_exists($imagepath) && !@unlink($imagepath)){
-				update_usermeta($userID, 'userphoto_error', __("Unable to delete photo.", 'userphoto'));
+				update_usermeta($userID, 'userphoto_error', __("Unable to delete photo.", 'user-photo'));
 			}
 			else {
 				delete_usermeta($userID, "userphoto_image_file");
@@ -129,31 +129,31 @@ function userphoto_profile_update($userID){
 				switch($_FILES['userphoto_image_file']['error']){
 					case UPLOAD_ERR_INI_SIZE:
 					case UPLOAD_ERR_FORM_SIZE:
-						$error = __("The uploaded file exceeds the max upload size.", 'userphoto');
+						$error = __("The uploaded file exceeds the max upload size.", 'user-photo');
 						break;
 					case UPLOAD_ERR_PARTIAL:
-						$error = __("The uploaded file was only partially uploaded.", 'userphoto');
+						$error = __("The uploaded file was only partially uploaded.", 'user-photo');
 						break;
 					case UPLOAD_ERR_NO_FILE:
-						$error = __("No file was uploaded.", 'userphoto');
+						$error = __("No file was uploaded.", 'user-photo');
 						break;
 					case UPLOAD_ERR_NO_TMP_DIR:
-						$error = __("Missing a temporary folder.", 'userphoto');
+						$error = __("Missing a temporary folder.", 'user-photo');
 						break;
 					case UPLOAD_ERR_CANT_WRITE:
-						$error = __("Failed to write file to disk.", 'userphoto');
+						$error = __("Failed to write file to disk.", 'user-photo');
 						break;
 					case UPLOAD_ERR_EXTENSION:
-						$error = __("File upload stopped by extension.", 'userphoto');
+						$error = __("File upload stopped by extension.", 'user-photo');
 						break;
 					default:
-						$error = __("File upload failed due to unknown error.", 'userphoto');
+						$error = __("File upload failed due to unknown error.", 'user-photo');
 				}
 			}
 			else if(!$_FILES['userphoto_image_file']['size'])
-				$error = sprintf(__("The file &ldquo;%s&rdquo; was not uploaded. Did you provide the correct filename?", 'userphoto'), $_FILES['userphoto_image_file']['name']);
+				$error = sprintf(__("The file &ldquo;%s&rdquo; was not uploaded. Did you provide the correct filename?", 'user-photo'), $_FILES['userphoto_image_file']['name']);
 			else if(@!$userphoto_validtypes[$_FILES['userphoto_image_file']['type']]) //!preg_match("/\.(" . join('|', $userphoto_validextensions) . ")$/i", $_FILES['userphoto_image_file']['name'])) ||
-				$error = sprintf(__("The uploaded file type &ldquo;%s&rdquo; is not allowed.", 'userphoto'), $_FILES['userphoto_image_file']['type']);
+				$error = sprintf(__("The uploaded file type &ldquo;%s&rdquo; is not allowed.", 'user-photo'), $_FILES['userphoto_image_file']['type']);
 			
 			$tmppath = $_FILES['userphoto_image_file']['tmp_name'];
 			
@@ -166,23 +166,23 @@ function userphoto_profile_update($userID){
 				
 				$imageinfo = getimagesize($tmppath);
 				if(!$imageinfo || !$imageinfo[0] || !$imageinfo[1])
-					$error = __("Unable to get image dimensions.", 'userphoto');
+					$error = __("Unable to get image dimensions.", 'user-photo');
 				else if($imageinfo[0] > $userphoto_maximum_dimension || $imageinfo[1] > $userphoto_maximum_dimension){
 					if(userphoto_resize_image($tmppath, null, $userphoto_maximum_dimension, $error))
 						$imageinfo = getimagesize($tmppath);
 				}
 				
 				//else if($imageinfo[0] > $userphoto_maximum_dimension)
-				//	$error = sprintf(__("The uploaded image had a width of %d pixels. The max width is %d.", 'userphoto'), $imageinfo[0], $userphoto_maximum_dimension);
+				//	$error = sprintf(__("The uploaded image had a width of %d pixels. The max width is %d.", 'user-photo'), $imageinfo[0], $userphoto_maximum_dimension);
 				//else if($imageinfo[0] > $userphoto_maximum_dimension)
-				//	$error = sprintf(__("The uploaded image had a height of %d pixels. The max height is %d.", 'userphoto'), $imageinfo[1], $userphoto_maximum_dimension);
+				//	$error = sprintf(__("The uploaded image had a height of %d pixels. The max height is %d.", 'user-photo'), $imageinfo[1], $userphoto_maximum_dimension);
 			}
 			
 			if(!$error){
 				$dir = ABSPATH . "/wp-content/uploads/userphoto";
 				#$umask = umask(0);
 				if(!file_exists($dir) && !mkdir($dir, 0777))
-					$error = __("The userphoto upload content directory does not exist and could not be created.", 'userphoto');
+					$error = __("The userphoto upload content directory does not exist and could not be created.", 'user-photo');
 				#umask($umask);
 				
 				if(!$error){
@@ -193,7 +193,7 @@ function userphoto_profile_update($userID){
 					$thumbpath = $dir . '/' . $thumbfile;
 					
 					if(!move_uploaded_file($tmppath, $imagepath)){
-						$error = __("Unable to move the file to the user photo upload content directory.", 'userphoto');
+						$error = __("Unable to move the file to the user photo upload content directory.", 'user-photo');
 					}
 					else {
 						#Generate thumbnail
@@ -326,7 +326,7 @@ function userphoto_display_selector_fieldset(){
 		<?php endif; ?>
 		
         </script>
-        <legend><?php echo $isSelf ? _e("Your Photo", 'userphoto') : _e("User Photo", 'userphoto') ?></legend>
+        <legend><?php echo $isSelf ? _e("Your Photo", 'user-photo') : _e("User Photo", 'user-photo') ?></legend>
         <?php if($profileuser->userphoto_image_file): ?>
             <p class='image'><img src="<?php echo get_option('siteurl') . '/wp-content/uploads/userphoto/' . $profileuser->userphoto_image_file . "?" . rand() ?>" alt="Full size image" /><br />
 			Full size
@@ -338,12 +338,12 @@ function userphoto_display_selector_fieldset(){
             
 			<?php if(!$current_user->has_cap('edit_users')): ?>
 				<?php if($profileuser->userphoto_approvalstatus == USERPHOTO_PENDING): ?>
-					<p id='userphoto-status-pending'><?php echo _e("Your profile photo has been submitted for review.", 'userphoto') ?></p>
+					<p id='userphoto-status-pending'><?php echo _e("Your profile photo has been submitted for review.", 'user-photo') ?></p>
 				<?php elseif($profileuser->userphoto_approvalstatus == USERPHOTO_REJECTED): ?>
-					<p id='userphoto-status-rejected'><strong>Notice: </strong> <?php _e("Your chosen profile photo has been rejected.", 'userphoto') ?>
+					<p id='userphoto-status-rejected'><strong>Notice: </strong> <?php _e("Your chosen profile photo has been rejected.", 'user-photo') ?>
 					<?php
 					if($profileuser->userphoto_rejectionreason){
-						_e("Reason: ", 'userphoto');
+						_e("Reason: ", 'user-photo');
 						echo htmlspecialchars($profileuser->userphoto_rejectionreason);
 					}
 					?>
@@ -356,7 +356,7 @@ function userphoto_display_selector_fieldset(){
 		<p id='userphoto-upload-error'><strong>Upload error:</strong> <?php echo $profileuser->userphoto_error ?></p>
 		<?php endif; ?>
         <p id='userphoto_image_file_control'>
-        <label><?php echo _e("Upload image file:", 'userphoto') ?>
+        <label><?php echo _e("Upload image file:", 'user-photo') ?>
 		<span class='field-hint'>(<?php
 		//if(!get_option('userphoto_autoresize'))
 		//	printf(__("max dimensions %d&times;%d;"), get_option('userphoto_maximum_dimension'), get_option('userphoto_maximum_dimension'));
@@ -368,20 +368,20 @@ function userphoto_display_selector_fieldset(){
         <label for="uphoto-fileURL">Image URL: </label><input type="url" name="uphoto-fileURL" id="uphoto-fileURL" value="http://" /><br />-->
         <?php if($current_user->has_cap('edit_users') && ($profileuser->ID != $current_user->ID) && $profileuser->userphoto_image_file): ?>
 			<p id="userphoto-approvalstatus-controls" <?php if($profileuser->userphoto_approvalstatus == USERPHOTO_PENDING) echo "class='pending'" ?>>
-			<label><?php _e("Approval status:", 'userphoto') ?>
+			<label><?php _e("Approval status:", 'user-photo') ?>
 			<select name="userphoto_approvalstatus" id="userphoto_approvalstatus" onchange="userphoto_approvalstatus_onchange()">
-				<option value="<?php echo USERPHOTO_PENDING ?>" <?php if($profileuser->userphoto_approvalstatus == USERPHOTO_PENDING) echo " selected='selected' " ?>><?php _e("pending", 'userphoto') ?></option>
-				<option value="<?php echo USERPHOTO_REJECTED ?>" <?php if($profileuser->userphoto_approvalstatus == USERPHOTO_REJECTED) echo " selected='selected' " ?>><?php _e("rejected", 'userphoto') ?></option>
-				<option value="<?php echo USERPHOTO_APPROVED ?>" <?php if($profileuser->userphoto_approvalstatus == USERPHOTO_APPROVED) echo " selected='selected' " ?>><?php _e("approved", 'userphoto') ?></option>
+				<option value="<?php echo USERPHOTO_PENDING ?>" <?php if($profileuser->userphoto_approvalstatus == USERPHOTO_PENDING) echo " selected='selected' " ?>><?php _e("pending", 'user-photo') ?></option>
+				<option value="<?php echo USERPHOTO_REJECTED ?>" <?php if($profileuser->userphoto_approvalstatus == USERPHOTO_REJECTED) echo " selected='selected' " ?>><?php _e("rejected", 'user-photo') ?></option>
+				<option value="<?php echo USERPHOTO_APPROVED ?>" <?php if($profileuser->userphoto_approvalstatus == USERPHOTO_APPROVED) echo " selected='selected' " ?>><?php _e("approved", 'user-photo') ?></option>
 			</select></label><br /><textarea name="userphoto_rejectionreason" <?php
 			if($profileuser->userphoto_approvalstatus != USERPHOTO_REJECTED)
 				echo ' style="display:none"';
-			?> id="userphoto_rejectionreason"><?php echo $profileuser->userphoto_rejectionreason ? $profileuser->userphoto_rejectionreason : __('The photo is inappropriate.', 'userphoto') ?></textarea>
+			?> id="userphoto_rejectionreason"><?php echo $profileuser->userphoto_rejectionreason ? $profileuser->userphoto_rejectionreason : __('The photo is inappropriate.', 'user-photo') ?></textarea>
 			</p>
 			<script type="text/javascript">userphoto_approvalstatus_onchange()</script>
         <?php endif; ?>
 		<?php if($profileuser->userphoto_image_file): ?>
-		<p><label><input type="checkbox" name="userphoto_delete" id="userphoto_delete" onclick="userphoto_onclick()" /> <?php _e('Delete photo?', 'userphoto')?></label></p>
+		<p><label><input type="checkbox" name="userphoto_delete" id="userphoto_delete" onclick="userphoto_onclick()" /> <?php _e('Delete photo?', 'user-photo')?></label></p>
 		<?php endif; ?>
     </fieldset>
     <?php
@@ -434,25 +434,25 @@ function userphoto_options_page(){
 			<?php wp_nonce_field('update-options') ?>
 			<p>
 				<label>
-					<?php _e("Maximum dimension: ", 'userphoto') ?>
+					<?php _e("Maximum dimension: ", 'user-photo') ?>
 					<input type="number" min="1" step="1" size="3" name="userphoto_maximum_dimension" value="<?php echo $userphoto_maximum_dimension ?>" />px
 				</label>
 			</p>
 			<p>
 				<label>
-					<?php _e("Thumbnail dimension: ", 'userphoto') ?>
+					<?php _e("Thumbnail dimension: ", 'user-photo') ?>
 					<input type="number" min="1" step="1" size="3" name="userphoto_thumb_dimension" value="<?php echo $userphoto_thumb_dimension ?>" />px
 				</label>
 			</p>
 			<p>
 				<label>
-					<?php _e("JPEG compression: ", 'userphoto') ?>
+					<?php _e("JPEG compression: ", 'user-photo') ?>
 					<input type="range" min="1" max="100" step="1" size="3" name="userphoto_jpeg_compression" value="<?php echo $userphoto_jpeg_compression ?>" />%
 				</label>
 			</p>
 			<p>
 				<label>
-					<?php _e("Notify this administrator by email when user photo needs approval: ", 'userphoto') ?>
+					<?php _e("Notify this administrator by email when user photo needs approval: ", 'user-photo') ?>
 					<select id='userphoto_admin_notified' name="userphoto_admin_notified">
 						<option value="0" class='none'>(none)</option>
 						<?php
@@ -474,7 +474,7 @@ function userphoto_options_page(){
 			<p>
 				<label>
 					<!--<input type="checkbox" id="userphoto_do_moderation" onclick="document.getElementById('userphoto_level_moderated').disabled = !this.checked" <?php /*if(isset($userphoto_level_moderated)) echo ' checked="checked"'*/ ?> />-->
-					<?php _e("Require user photo moderation for all users at or below this level: ", 'userphoto') ?>
+					<?php _e("Require user photo moderation for all users at or below this level: ", 'user-photo') ?>
 					<select name="userphoto_level_moderated" id="userphoto_level_moderated">
 						<option value="-1" <?php if($userphoto_level_moderated == -1) echo ' selected="selected"' ?> class='none'>(none)</option>
 						<option value="0" <?php if($userphoto_level_moderated == 0) echo ' selected="selected"' ?>>Subscriber</option>
@@ -509,7 +509,7 @@ function userphoto_resize_image($filename, $newFilename, $maxdimension, &$error)
 	
 	$info = @getimagesize($filename);
 	if(!$info || !$info[0] || !$info[1]){
-		$error = __("Unable to get image dimensions.", 'userphoto');
+		$error = __("Unable to get image dimensions.", 'user-photo');
 	}
 	//From WordPress image.php line 22
 	else if (
@@ -519,7 +519,7 @@ function userphoto_resize_image($filename, $newFilename, $maxdimension, &$error)
 		||
 		!function_exists( 'imagepng' ) && $info[2] == IMAGETYPE_PNG
 	) {
-		$error = __( 'Filetype not supported.', 'userphoto' );
+		$error = __( 'Filetype not supported.', 'user-photo' );
 	}
 	else {
 		// create the initial copy from the original file
@@ -533,7 +533,7 @@ function userphoto_resize_image($filename, $newFilename, $maxdimension, &$error)
 			$image = imagecreatefrompng( $filename );
 		}
 		if(!isset($image)){
-			$error = __("Unrecognized image format.", 'userphoto');
+			$error = __("Unrecognized image format.", 'user-photo');
 			return false;
 		}
 		if ( function_exists( 'imageantialias' ))

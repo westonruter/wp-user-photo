@@ -12,14 +12,17 @@ Allows a user to associate a photo with their account and for this photo to be d
 add a user photo by accessing the "Edit User" page. Uploaded images are resized to fit the dimensions specified 
 on the options page; a thumbnail image is also generated. New template tags introduced are: 
 
-*   <code>the_author_photo()</code>
-*   <code>the_author_thumbnail()</code>
-*   <code>comment_author_photo()</code>
-*   <code>comment_author_thumbnail()</code>
+*   <code>userphoto_the_author_photo()</code>
+*   <code>userphoto_the_author_thumbnail()</code>
+*   <code>userphoto_comment_author_photo()</code>
+*   <code>userphoto_comment_author_thumbnail()</code>
 
 Uploaded images may be moderated by administrators via the "Edit User" page.
 
 == Changelog ==
+= 2007-12-22: 0.7.1
+* All functions (and template tags) now are prefixed with "userphoto_"
+
 = 2007-12-18: 0.7.0.1 =
 * Now using `siteurl` option instead of `home` option
 * Fixed the inclusion of the stylesheet for the options page
