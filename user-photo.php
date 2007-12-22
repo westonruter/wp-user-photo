@@ -7,7 +7,8 @@ Description: Allows users to associate photos with their accounts by accessing t
 Author: Weston Ruter
 Version: 0.7.1
 Author URI: http://weston.ruter.net/
-
+Copyright: 2007, Weston Ruter
+License: GNU General Public License, Free Software Foundation <http://creativecommons.org/licenses/GPL/2.0/>
 */
 
 if(!function_exists('imagecopyresampled'))
@@ -583,6 +584,5 @@ function userphoto_resize_image($filename, $newFilename, $maxdimension, &$error)
 		return false;
 	return true;
 }
-
 
 ?>
