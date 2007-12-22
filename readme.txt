@@ -31,3 +31,4 @@ Uploaded images may be moderated by administrators via the "Edit User" page.
 1. Add a management page to allow admins to quickly approve/reject user photos.
 1. Add option so that when a photo is rejected, the user is notified.
 1. Restrict image types acceptable?
+
