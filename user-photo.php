@@ -1,18 +1,39 @@
 <?php
-
 /*
 Plugin Name: User Photo
 Plugin URI: http://wordpress.org/extend/plugins/user-photo/
 Description: Allows users to associate photos with their accounts by accessing their "Your Profile" page. Uploaded images are resized to fit the dimensions specified on the options page; a thumbnail image is also generated. New template tags introduced are: <code>userphoto_the_author_photo</code>, <code>userphoto_the_author_thumbnail</code>, <code>userphoto_comment_author_photo</code>, and <code>userphoto_comment_author_thumbnail</code>. Uploaded images may be moderated by administrators.
+Version: 0.7.2
 Author: Weston Ruter
-Version: 0.7.1
 Author URI: http://weston.ruter.net/
 Copyright: 2007, Weston Ruter
-License: GNU General Public License, Free Software Foundation <http://creativecommons.org/licenses/GPL/2.0/>
+
+GNU General Public License, Free Software Foundation <http://creativecommons.org/licenses/GPL/2.0/>
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-if(!function_exists('imagecopyresampled'))
-	trigger_error(__("Plugin not usable on this system because image resizing is not available, specifically the imagecopyresampled() and related functions.", 'user-photo'), E_USER_ERROR);
+define('USERPHOTO_PLUGIN_IDENTIFIER', 'user-photo/user-photo.php');
+
+if(!function_exists('imagecopyresampled')){
+	//Remove this from active plugins
+	$active_plugins = get_option('active_plugins');
+	array_splice($active_plugins, array_search(USERPHOTO_PLUGIN_IDENTIFIER, $active_plugins), 1); //preg_replace('{^.+(?=[^/]+/[^/]+)}', '', __FILE__)
+	update_option('active_plugins', $active_plugins);
+	
+	trigger_error(__("User Photo plugin not usable on this system because image resizing is not available, specifically the imagecopyresampled() and related functions. It has been deactivated.", 'user-photo'), E_USER_ERROR);
+}
 
 
 $userphoto_validtypes = array(
@@ -183,7 +204,7 @@ function userphoto_profile_update($userID){
 				$dir = ABSPATH . "/wp-content/uploads/userphoto";
 				#$umask = umask(0);
 				if(!file_exists($dir) && !mkdir($dir, 0777))
-					$error = __("The userphoto upload content directory does not exist and could not be created.", 'user-photo');
+					$error = __("The userphoto upload content directory does not exist and could not be created. Please ensure that you have write permissions for the /wp-content/uploads/ directory.", 'user-photo');
 				#umask($umask);
 				
 				if(!$error){
@@ -197,6 +218,8 @@ function userphoto_profile_update($userID){
 						$error = __("Unable to move the file to the user photo upload content directory.", 'user-photo');
 					}
 					else {
+						chmod($imagepath, 0666);
+						
 						#Generate thumbnail
 						$userphoto_thumb_dimension = get_option( 'userphoto_thumb_dimension' );
 						#if(empty($userphoto_thumb_dimension))
@@ -206,6 +229,7 @@ function userphoto_profile_update($userID){
 						}
 						else {
 							copy($imagepath, $thumbpath);
+							chmod($thumbpath, 0666);
 						}
 						$thumbinfo = getimagesize($thumbpath);
 						

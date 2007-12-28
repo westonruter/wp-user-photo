@@ -20,6 +20,11 @@ on the options page; a thumbnail image is also generated. New template tags intr
 Uploaded images may be moderated by administrators via the "Edit User" page.
 
 == Changelog ==
+= 2007-12-28: 0.7.2
+* Improved error message raised when unable to create 'userphoto' directory under /wp-content/uploads/. It now asks about whether write-permissions are set for the directory.
+* Improved the plugin activation handler.
+* All uploaded images are now explicitly set to chmod 666.
+
 = 2007-12-22: 0.7.1
 * All functions (and template tags) now are prefixed with "userphoto_"
 
@@ -31,4 +36,3 @@ Uploaded images may be moderated by administrators via the "Edit User" page.
 1. Add a management page to allow admins to quickly approve/reject user photos.
 1. Add option so that when a photo is rejected, the user is notified.
 1. Restrict image types acceptable?
-
