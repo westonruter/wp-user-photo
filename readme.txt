@@ -20,12 +20,12 @@ on the options page; a thumbnail image is also generated. New template tags intr
 Uploaded images may be moderated by administrators via the "Edit User" page.
 
 == Changelog ==
-= 2007-12-28: 0.7.2
+= 2007-12-28: 0.7.2 =
 * Improved error message raised when unable to create 'userphoto' directory under /wp-content/uploads/. It now asks about whether write-permissions are set for the directory.
 * Improved the plugin activation handler.
 * All uploaded images are now explicitly set to chmod 666.
 
-= 2007-12-22: 0.7.1
+= 2007-12-22: 0.7.1 =
 * All functions (and template tags) now are prefixed with "userphoto_"
 
 = 2007-12-18: 0.7.0.1 =
