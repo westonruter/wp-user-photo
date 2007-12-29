@@ -8,9 +8,11 @@ Allows a user to associate a photo with their account and for this photo to be d
 
 == Description ==
 
-    Allows users to associate photos with their accounts by accessing their "Your Profile" page. Admins may 
-add a user photo by accessing the "Edit User" page. Uploaded images are resized to fit the dimensions specified 
-on the options page; a thumbnail image is also generated. New template tags introduced are: 
+    Allows a user to associate a profile photo with their account through their "Your Profile" page. Admins may 
+add a user profile photo by accessing the "Edit User" page. Uploaded images are resized to fit the dimensions specified 
+on the options page; a thumbnail image correspondingly is also generated. 
+User photos may be displayed within a post or a comment to 
+help identify the author. New template tags introduced are: 
 
 *   <code>userphoto_the_author_photo()</code>
 *   <code>userphoto_the_author_thumbnail()</code>
@@ -36,3 +38,4 @@ Uploaded images may be moderated by administrators via the "Edit User" page.
 1. Add a management page to allow admins to quickly approve/reject user photos.
 1. Add option so that when a photo is rejected, the user is notified.
 1. Restrict image types acceptable?
+1. Add an option to indicate a default photo to be used when none supplied.
