@@ -8,7 +8,7 @@ Allows a user to associate a photo with their account and for this photo to be d
 
 == Description ==
 
-    Allows a user to associate a profile photo with their account through their "Your Profile" page. Admins may 
+Allows a user to associate a profile photo with their account through their "Your Profile" page. Admins may 
 add a user profile photo by accessing the "Edit User" page. Uploaded images are resized to fit the dimensions specified 
 on the options page; a thumbnail image correspondingly is also generated. 
 User photos may be displayed within a post or a comment to 
