@@ -1,4 +1,4 @@
-=== Plugin Name ===
+=== User Photo ===
 Contributors: westonruter
 Tags: users, photos, images
 Tested up to: 2.3.1
@@ -21,21 +21,24 @@ help identify the author. New template tags introduced are:
 
 Uploaded images may be moderated by administrators via the "Edit User" page.
 
-== Changelog ==
-= 2007-12-28: 0.7.2 =
+= Changelog =
+*2007-12-28: 0.7.2*
 * Improved error message raised when unable to create 'userphoto' directory under /wp-content/uploads/. It now asks about whether write-permissions are set for the directory.
 * Improved the plugin activation handler.
 * All uploaded images are now explicitly set to chmod 666.
 
-= 2007-12-22: 0.7.1 =
+*2007-12-22: 0.7.1*
 * All functions (and template tags) now are prefixed with "userphoto_"
 
-= 2007-12-18: 0.7.0.1 =
+*2007-12-18: 0.7.0.1*
 * Now using `siteurl` option instead of `home` option
 * Fixed the inclusion of the stylesheet for the options page
 
-== Todo ==
+= Todo =
 1. Add a management page to allow admins to quickly approve/reject user photos.
 1. Add option so that when a photo is rejected, the user is notified.
 1. Restrict image types acceptable?
 1. Add an option to indicate a default photo to be used when none supplied.
+
+== Screenshots ==
+1. Admin section in User Profile page
