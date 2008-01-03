@@ -19,9 +19,16 @@ help identify the author. New template tags introduced are:
 *   <code>userphoto_comment_author_photo()</code>
 *   <code>userphoto_comment_author_thumbnail()</code>
 
+The first two should be placed in the posts loop near <code>the_author()</code>, and the second two in the comments
+loop near <code>comment_author()</code> (or their respective equivalents).
+
 Uploaded images may be moderated by administrators via the "Edit User" page.
 
 = Changelog =
+*2008-01-02: 0.7.3*
+
+* Fixed issue where the post author photo was inadvertently used for non-registered comment author photos.
+
 *2007-12-28: 0.7.2*
 
 * Improved error message raised when unable to create 'userphoto' directory under /wp-content/uploads/. It now asks about whether write-permissions are set for the directory.
@@ -42,6 +49,7 @@ Uploaded images may be moderated by administrators via the "Edit User" page.
 1. Add option so that when a photo is rejected, the user is notified.
 1. Restrict image types acceptable?
 1. Add an option to indicate a default photo to be used when none supplied.
+1. Allow IMG attributes to be passed into template tags, including a default SRC value to be used when there is no user photo.
 
 == Screenshots ==
 1. Admin section in User Profile page

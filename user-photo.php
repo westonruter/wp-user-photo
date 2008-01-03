@@ -3,7 +3,7 @@
 Plugin Name: User Photo
 Plugin URI: http://wordpress.org/extend/plugins/user-photo/
 Description: Allows users to associate photos with their accounts by accessing their "Your Profile" page. Uploaded images are resized to fit the dimensions specified on the options page; a thumbnail image is also generated. New template tags introduced are: <code>userphoto_the_author_photo</code>, <code>userphoto_the_author_thumbnail</code>, <code>userphoto_comment_author_photo</code>, and <code>userphoto_comment_author_thumbnail</code>. Uploaded images may be moderated by administrators.
-Version: 0.7.2
+Version: 0.7.3
 Author: Weston Ruter
 Author URI: http://weston.ruter.net/
 Copyright: 2007, Weston Ruter
@@ -65,13 +65,13 @@ function userphoto_get_userphoto_the_author_photo($user_id = false){
 	global $authordata;
 	global $comment;
 	if(!$user_id){
-		if(isset($comment) && $comment->user_id)
+		if(!empty($comment) && $comment->user_id)
 			$user_id = $comment->user_id;
-		else if(isset($authordata))
+		else if(!empty($authordata))
 			$user_id = $authordata->ID;
-		else trigger_error("Unable to discern user ID.");
+		//else trigger_error("Unable to discern user ID.");
 	}
-	if(($userdata = get_userdata($user_id)) && $userdata->userphoto_image_file){
+	if($user_id && ($userdata = get_userdata($user_id)) && $userdata->userphoto_image_file){
 		print '<img src="' . get_option('siteurl') . '/wp-content/uploads/userphoto/' . $userdata->userphoto_image_file . '"';
 		print ' alt="' . htmlspecialchars($userdata->display_name) . '"';
 		print ' width="' . htmlspecialchars($userdata->userphoto_image_width) . '"';
@@ -83,13 +83,13 @@ function userphoto_get_userphoto_the_author_thumbnail($user_id){
 	global $authordata;
 	global $comment;
 	if(!$user_id){
-		if(isset($comment) && $comment->user_id)
+		if(!empty($comment) && $comment->user_id)
 			$user_id = $comment->user_id;
-		else if(isset($authordata))
+		else if(!empty($authordata))
 			$user_id = $authordata->ID;
-		else trigger_error("Unable to discern user ID.");
+		//else trigger_error("Unable to discern user ID.");
 	}
-	if(($userdata = get_userdata($user_id)) && $userdata->userphoto_thumb_file){
+	if($user_id && ($userdata = get_userdata($user_id)) && $userdata->userphoto_thumb_file){
 		print '<img src="' . get_option('siteurl') . '/wp-content/uploads/userphoto/' . $userdata->userphoto_thumb_file . '"';
 		print ' alt="' . htmlspecialchars($userdata->display_name) . '"';
 		print ' width="' . htmlspecialchars($userdata->userphoto_thumb_width) . '"';
@@ -100,19 +100,23 @@ function userphoto_get_userphoto_the_author_thumbnail($user_id){
 
 function userphoto_comment_author_photo(){
 	global $comment;
-	echo userphoto_get_userphoto_the_author_photo($comment->user_id);
+	if(!empty($comment) && $comment->user_id)
+		echo userphoto_get_userphoto_the_author_photo($comment->user_id);
 }
 function userphoto_comment_author_thumbnail(){
 	global $comment;
-	echo userphoto_get_userphoto_the_author_thumbnail($comment->user_id);
+	if(!empty($comment) && $comment->user_id)
+		echo userphoto_get_userphoto_the_author_thumbnail($comment->user_id);
 }
 function userphoto_the_author_photo(){
 	global $authordata;
-	echo userphoto_get_userphoto_the_author_photo($authordata->ID);
+	if(!empty($authordata) && $authordata->ID)
+		echo userphoto_get_userphoto_the_author_photo($authordata->ID);
 }
 function userphoto_the_author_thumbnail(){
 	global $authordata;
-	echo userphoto_get_userphoto_the_author_thumbnail($authordata->ID);
+	if(!empty($authordata) && $authordata->ID)
+		echo userphoto_get_userphoto_the_author_thumbnail($authordata->ID);
 }
 
 
