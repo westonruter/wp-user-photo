@@ -613,4 +613,5 @@ function userphoto_resize_image($filename, $newFilename, $maxdimension, &$error)
 	return true;
 }
 
+
 ?>

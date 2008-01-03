@@ -53,3 +53,4 @@ Uploaded images may be moderated by administrators via the "Edit User" page.
 
 == Screenshots ==
 1. Admin section in User Profile page
+
