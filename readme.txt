@@ -21,7 +21,8 @@ help identify the author. New template tags introduced are:
 *   <code>userphoto_comment_author_thumbnail()</code>
 
 The first two should be placed in the posts loop near <code>the_author()</code>, and the second two in the comments
-loop near <code>comment_author()</code> (or their respective equivalents).
+loop near <code>comment_author()</code> (or their respective equivalents). Furthermore, <code>userphoto_the_author_photo()</code>
+and <code>userphoto_the_author_thumbnail()</code> may be called anywhere (i.e. sidebar) if <code>$authordata</code> is set.
 
 Uploaded images may be moderated by administrators via the "Edit User" page.
 
