@@ -3,6 +3,7 @@ Contributors: westonruter
 Tags: users, photos, images
 Tested up to: 2.3.1
 Stable tag: trunk
+Donate link: http://weston.ruter.net/donate/
 
 Allows a user to associate a photo with their account and for this photo to be displayed in their posts and comments.
 
@@ -25,6 +26,10 @@ loop near <code>comment_author()</code> (or their respective equivalents).
 Uploaded images may be moderated by administrators via the "Edit User" page.
 
 = Changelog =
+*2008-01-06: 0.7.4*
+
+* Added support for localization and added Spanish localization translated by Pakus (thanks!)
+
 *2008-01-02: 0.7.3*
 
 * Fixed issue where the post author photo was inadvertently used for non-registered comment author photos.

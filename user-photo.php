@@ -3,7 +3,7 @@
 Plugin Name: User Photo
 Plugin URI: http://wordpress.org/extend/plugins/user-photo/
 Description: Allows users to associate photos with their accounts by accessing their "Your Profile" page. Uploaded images are resized to fit the dimensions specified on the options page; a thumbnail image is also generated. New template tags introduced are: <code>userphoto_the_author_photo</code>, <code>userphoto_the_author_thumbnail</code>, <code>userphoto_comment_author_photo</code>, and <code>userphoto_comment_author_thumbnail</code>. Uploaded images may be moderated by administrators.
-Version: 0.7.3
+Version: 0.7.4
 Author: Weston Ruter
 Author URI: http://weston.ruter.net/
 Copyright: 2007, Weston Ruter
@@ -61,40 +61,56 @@ add_option("userphoto_thumb_dimension", 80);
 add_option("userphoto_admin_notified", 0); //0 means disable
 add_option("userphoto_level_moderated", 2); //Note: -1 means disable
 
+# Load up the localization file if we're using WordPress in a different language
+# Place it in the "localization" folder and name it "user-photo-[value in wp-config].mo"
+load_plugin_textdomain('user-photo', PLUGINDIR . '/user-photo/localization'); #(thanks Pakus)
+
 function userphoto_get_userphoto_the_author_photo($user_id = false){
-	global $authordata;
-	global $comment;
-	if(!$user_id){
-		if(!empty($comment) && $comment->user_id)
-			$user_id = $comment->user_id;
-		else if(!empty($authordata))
-			$user_id = $authordata->ID;
-		//else trigger_error("Unable to discern user ID.");
-	}
+	#global $authordata;
+	#global $comment;
+	#if(!$user_id){
+	#	if(!empty($comment) && $comment->user_id)
+	#
+	#		$user_id = $comment->user_id;
+	#	else if(!empty($authordata))
+	#		$user_id = $authordata->ID;
+	#	//else trigger_error("Unable to discern user ID.");
+	#}
 	if($user_id && ($userdata = get_userdata($user_id)) && $userdata->userphoto_image_file){
-		print '<img src="' . get_option('siteurl') . '/wp-content/uploads/userphoto/' . $userdata->userphoto_image_file . '"';
-		print ' alt="' . htmlspecialchars($userdata->display_name) . '"';
-		print ' width="' . htmlspecialchars($userdata->userphoto_image_width) . '"';
-		print ' height="' . htmlspecialchars($userdata->userphoto_image_height) . '"';
-		print " />";
+		$img = '<img src="' . get_option('siteurl') . '/wp-content/uploads/userphoto/' . $userdata->userphoto_image_file . '"';
+		$img .= ' alt="' . htmlspecialchars($userdata->display_name) . '"';
+		$img .= ' width="' . htmlspecialchars($userdata->userphoto_image_width) . '"';
+		$img .= ' height="' . htmlspecialchars($userdata->userphoto_image_height) . '"';
+		$img .= ' />';
+		return $img;
+	}
+	#Print default image
+	else {
+		return "";
 	}
 }
 function userphoto_get_userphoto_the_author_thumbnail($user_id){
-	global $authordata;
-	global $comment;
-	if(!$user_id){
-		if(!empty($comment) && $comment->user_id)
-			$user_id = $comment->user_id;
-		else if(!empty($authordata))
-			$user_id = $authordata->ID;
-		//else trigger_error("Unable to discern user ID.");
-	}
+	#global $authordata;
+	#global $comment;
+	#if(!$user_id){
+	#	if(!empty($comment) && $comment->user_id)
+	#
+	#		$user_id = $comment->user_id;
+	#	else if(!empty($authordata))
+	#		$user_id = $authordata->ID;
+	#	//else trigger_error("Unable to discern user ID.");
+	#}
 	if($user_id && ($userdata = get_userdata($user_id)) && $userdata->userphoto_thumb_file){
-		print '<img src="' . get_option('siteurl') . '/wp-content/uploads/userphoto/' . $userdata->userphoto_thumb_file . '"';
-		print ' alt="' . htmlspecialchars($userdata->display_name) . '"';
-		print ' width="' . htmlspecialchars($userdata->userphoto_thumb_width) . '"';
-		print ' height="' . htmlspecialchars($userdata->userphoto_thumb_height) . '"';
-		print " />";
+		$img = '<img src="' . get_option('siteurl') . '/wp-content/uploads/userphoto/' . $userdata->userphoto_thumb_file . '"';
+		$img .= ' alt="' . htmlspecialchars($userdata->display_name) . '"';
+		$img .= ' width="' . htmlspecialchars($userdata->userphoto_thumb_width) . '"';
+		$img .= ' height="' . htmlspecialchars($userdata->userphoto_thumb_height) . '"';
+		$img .= ' />';
+		return $img;
+	}
+	#Print default image
+	else {
+		return "";
 	}
 }
 
@@ -612,6 +628,5 @@ function userphoto_resize_image($filename, $newFilename, $maxdimension, &$error)
 		return false;
 	return true;
 }
-
 
 ?>
