@@ -28,6 +28,8 @@ Uploaded images may be moderated by administrators via the "Edit User" page.
 
 Localizations included for Spanish and German.
 
+If you value this plugin, *please donate* to ensure that it may continue to be maintained and improved.
+
 = Changelog =
 *2008-01-07: 0.7.4b*
 
