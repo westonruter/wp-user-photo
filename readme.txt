@@ -26,7 +26,13 @@ and <code>userphoto_the_author_thumbnail()</code> may be called anywhere (i.e. s
 
 Uploaded images may be moderated by administrators via the "Edit User" page.
 
+Localizations included for Spanish and German.
+
 = Changelog =
+*2008-01-07: 0.7.4b*
+
+* Added German localization translated by Robert Harm (thanks!)
+
 *2008-01-06: 0.7.4*
 
 * Added support for localization and added Spanish localization translated by Pakus (thanks!)
