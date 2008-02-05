@@ -24,13 +24,25 @@ The first two should be placed in the posts loop near <code>the_author()</code>,
 loop near <code>comment_author()</code> (or their respective equivalents). Furthermore, <code>userphoto_the_author_photo()</code>
 and <code>userphoto_the_author_thumbnail()</code> may be called anywhere (i.e. sidebar) if <code>$authordata</code> is set.
 
+The output of these template tags may be modified by passing four parameters: <code>$before</code>, <code>$after</code>,
+<code>$attributes</code>, and <code>$default_src</code>, as in: <code>userphoto_the_author_photo($before, $after, $attributes, $default_src)</code>.
+If the user photo exists (or <code>$default_src</code> is supplied), then the text provided in the <code>$before</code> and <code>$after</code> parameters is respectively
+prefixed and suffixed to the generated <code>img</code> tag (a common pattern in WordPress). If attributes are provided in the <code>$attributes</code>
+parameter, then they are returned as attributes of the generated <code>img</code> element. For example: <code>userphoto_the_author_photo('', '', array(style => 'border:0'))</code>
+
 Uploaded images may be moderated by administrators via the "Edit User" page.
 
-Localizations included for Spanish and German.
+Localizations included for Spanish, German, and Dutch.
 
 If you value this plugin, *please donate* to ensure that it may continue to be maintained and improved.
 
 = Changelog =
+*2008-02-04: 0.8*
+
+* Allow before and after text to be outputted when there is a user photo.
+* Allow attributes to be passed into template tags, including a default SRC value to be used when there is no user photo.
+* Added Dutch localization translated by Joep Stender (thanks!)
+
 *2008-01-07: 0.7.4b*
 
 * Added German localization translated by Robert Harm (thanks!)
@@ -63,7 +75,6 @@ If you value this plugin, *please donate* to ensure that it may continue to be m
 1. Add option so that when a photo is rejected, the user is notified.
 1. Restrict image types acceptable?
 1. Add an option to indicate a default photo to be used when none supplied.
-1. Allow IMG attributes to be passed into template tags, including a default SRC value to be used when there is no user photo.
 
 == Screenshots ==
 1. Admin section in User Profile page

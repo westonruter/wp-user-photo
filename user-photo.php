@@ -3,10 +3,10 @@
 Plugin Name: User Photo
 Plugin URI: http://wordpress.org/extend/plugins/user-photo/
 Description: Allows users to associate photos with their accounts by accessing their "Your Profile" page. Uploaded images are resized to fit the dimensions specified on the options page; a thumbnail image is also generated. New template tags introduced are: <code>userphoto_the_author_photo</code>, <code>userphoto_the_author_thumbnail</code>, <code>userphoto_comment_author_photo</code>, and <code>userphoto_comment_author_thumbnail</code>. Uploaded images may be moderated by administrators.
-Version: 0.7.4b
+Version: 0.8
 Author: Weston Ruter
 Author URI: http://weston.ruter.net/
-Copyright: 2007, Weston Ruter
+Copyright: 2008, Weston Ruter
 
 GNU General Public License, Free Software Foundation <http://creativecommons.org/licenses/GPL/2.0/>
 This program is free software; you can redistribute it and/or modify
@@ -54,6 +54,8 @@ define('USERPHOTO_APPROVED', 2);
 #define('USERPHOTO_DEFAULT_THUMB_DIMENSION', 80);
 #define('USERPHOTO_DEFAULT_JPEG_COMPRESSION', 90);
 #define('USERPHOTO_DEFAULT_LEVEL_MODERATED', 2);
+define('USERPHOTO_FULL_SIZE', 1);
+define('USERPHOTO_THUMBNAIL_SIZE', 2);
 
 add_option("userphoto_jpeg_compression", 90);
 add_option("userphoto_maximum_dimension", 150);
@@ -65,74 +67,123 @@ add_option("userphoto_level_moderated", 2); //Note: -1 means disable
 # Place it in the "localization" folder and name it "user-photo-[value in wp-config].mo"
 load_plugin_textdomain('user-photo', PLUGINDIR . '/user-photo/localization'); #(thanks Pakus)
 
-function userphoto_get_userphoto_the_author_photo($user_id = false){
-	#global $authordata;
-	#global $comment;
-	#if(!$user_id){
-	#	if(!empty($comment) && $comment->user_id)
-	#
-	#		$user_id = $comment->user_id;
-	#	else if(!empty($authordata))
-	#		$user_id = $authordata->ID;
-	#	//else trigger_error("Unable to discern user ID.");
-	#}
-	if($user_id && ($userdata = get_userdata($user_id)) && $userdata->userphoto_image_file){
-		$img = '<img src="' . get_option('siteurl') . '/wp-content/uploads/userphoto/' . $userdata->userphoto_image_file . '"';
-		$img .= ' alt="' . htmlspecialchars($userdata->display_name) . '"';
-		$img .= ' width="' . htmlspecialchars($userdata->userphoto_image_width) . '"';
-		$img .= ' height="' . htmlspecialchars($userdata->userphoto_image_height) . '"';
+function userphoto__get_userphoto($user_id, $photoSize, $before, $after, $attributes, $default_src){
+	//Note: when we move to a global default user photo, we can always enter into the following conditional
+	if($user_id && ($userdata = get_userdata($user_id))){
+		if($image_file = ($photoSize == USERPHOTO_FULL_SIZE ? $userdata->userphoto_image_file : $userdata->userphoto_thumb_file)){
+			$width = $photoSize == USERPHOTO_FULL_SIZE ? $userdata->userphoto_image_width : $userdata->userphoto_thumb_width;
+			$height = $photoSize == USERPHOTO_FULL_SIZE ? $userdata->userphoto_image_height : $userdata->userphoto_thumb_height;
+		}
+		else if(($default_src)){
+			print_r($default_src);
+			$image_file = $default_src;
+			$width = $height = 0;
+		}
+		else return '';
+		
+		$img = '';
+		$img .= $before;
+		$img .= '<img src="' . get_option('siteurl') . '/wp-content/uploads/userphoto/' . $image_file . '"';
+		if(empty($attributes['alt']))
+			$img .= ' alt="' . htmlspecialchars($userdata->display_name) . '"';
+		if(empty($attributes['width']) && !empty($width))
+			$img .= ' width="' . htmlspecialchars($width) . '"';
+		if(empty($attributes['height']) && !empty($height))
+			$img .= ' height="' . htmlspecialchars($height) . '"';
+		if(!empty($attributes)){
+			foreach($attributes as $name => $value){
+				$img .= " $name=\"" . htmlspecialchars($value) . '"';
+			}
+		}
 		$img .= ' />';
+		$img .= $after;
 		return $img;
 	}
-	#Print default image
+	//else if(is_array($failureAttributes)){
+	//	$img = '';
+	//	$img .= $before;
+	//	$img .= '<img ';
+	//	foreach($failureAttributes as $name => $value){
+	//		$img .= " $name=\"" . htmlspecialchars($value) . '"';
+	//	}
+	//	$img .= ' />';
+	//	$img .= $after;
+	//	return $img;
+	//}
 	else {
 		return "";
 	}
+	
 }
-function userphoto_get_userphoto_the_author_thumbnail($user_id){
-	#global $authordata;
-	#global $comment;
-	#if(!$user_id){
-	#	if(!empty($comment) && $comment->user_id)
-	#
-	#		$user_id = $comment->user_id;
-	#	else if(!empty($authordata))
-	#		$user_id = $authordata->ID;
-	#	//else trigger_error("Unable to discern user ID.");
-	#}
-	if($user_id && ($userdata = get_userdata($user_id)) && $userdata->userphoto_thumb_file){
-		$img = '<img src="' . get_option('siteurl') . '/wp-content/uploads/userphoto/' . $userdata->userphoto_thumb_file . '"';
-		$img .= ' alt="' . htmlspecialchars($userdata->display_name) . '"';
-		$img .= ' width="' . htmlspecialchars($userdata->userphoto_thumb_width) . '"';
-		$img .= ' height="' . htmlspecialchars($userdata->userphoto_thumb_height) . '"';
-		$img .= ' />';
-		return $img;
-	}
-	#Print default image
-	else {
-		return "";
-	}
-}
+//
+//function userphoto_get_userphoto_the_author_photo($user_id = false){
+//	#global $authordata;
+//	#global $comment;
+//	#if(!$user_id){
+//	#	if(!empty($comment) && $comment->user_id)
+//	#
+//	#		$user_id = $comment->user_id;
+//	#	else if(!empty($authordata))
+//	#		$user_id = $authordata->ID;
+//	#	//else trigger_error("Unable to discern user ID.");
+//	#}
+//	if($user_id && ($userdata = get_userdata($user_id)) && $userdata->userphoto_image_file){
+//		$img = '<img src="' . get_option('siteurl') . '/wp-content/uploads/userphoto/' . $userdata->userphoto_image_file . '"';
+//		$img .= ' alt="' . htmlspecialchars($userdata->display_name) . '"';
+//		$img .= ' width="' . htmlspecialchars($userdata->userphoto_image_width) . '"';
+//		$img .= ' height="' . htmlspecialchars($userdata->userphoto_image_height) . '"';
+//		$img .= ' />';
+//		return $img;
+//	}
+//	#Print default image
+//	else {
+//		return "";
+//	}
+//}
+//function userphoto_get_userphoto_the_author_thumbnail($user_id){
+//	#global $authordata;
+//	#global $comment;
+//	#if(!$user_id){
+//	#	if(!empty($comment) && $comment->user_id)
+//	#
+//	#		$user_id = $comment->user_id;
+//	#	else if(!empty($authordata))
+//	#		$user_id = $authordata->ID;
+//	#	//else trigger_error("Unable to discern user ID.");
+//	#}
+//	if($user_id && ($userdata = get_userdata($user_id)) && $userdata->userphoto_thumb_file){
+//		$img = '<img src="' . get_option('siteurl') . '/wp-content/uploads/userphoto/' . $userdata->userphoto_thumb_file . '"';
+//		$img .= ' alt="' . htmlspecialchars($userdata->display_name) . '"';
+//		$img .= ' width="' . htmlspecialchars($userdata->userphoto_thumb_width) . '"';
+//		$img .= ' height="' . htmlspecialchars($userdata->userphoto_thumb_height) . '"';
+//		$img .= ' />';
+//		return $img;
+//	}
+//	#Print default image
+//	else {
+//		return "";
+//	}
+//}
 
-function userphoto_comment_author_photo(){
+function userphoto_comment_author_photo($before = '', $after = '', $attributes = array(), $default_src = ''){
 	global $comment;
 	if(!empty($comment) && $comment->user_id)
-		echo userphoto_get_userphoto_the_author_photo($comment->user_id);
+		echo userphoto__get_userphoto($comment->user_id, USERPHOTO_FULL_SIZE, $before, $after, $attributes, $default_src);
 }
-function userphoto_comment_author_thumbnail(){
+function userphoto_comment_author_thumbnail($before = '', $after = '', $attributes = array(), $default_src = ''){
 	global $comment;
 	if(!empty($comment) && $comment->user_id)
-		echo userphoto_get_userphoto_the_author_thumbnail($comment->user_id);
+		echo userphoto__get_userphoto($comment->user_id, USERPHOTO_THUMBNAIL_SIZE, $before, $after, $attributes, $default_src);
 }
-function userphoto_the_author_photo(){
+function userphoto_the_author_photo($before = '', $after = '', $attributes = array(), $default_src = ''){
 	global $authordata;
 	if(!empty($authordata) && $authordata->ID)
-		echo userphoto_get_userphoto_the_author_photo($authordata->ID);
+		echo userphoto__get_userphoto($authordata->ID, USERPHOTO_FULL_SIZE, $before, $after, $attributes, $default_src);
 }
-function userphoto_the_author_thumbnail(){
+function userphoto_the_author_thumbnail($before = '', $after = '', $attributes = array(), $default_src = ''){
 	global $authordata;
 	if(!empty($authordata) && $authordata->ID)
-		echo userphoto_get_userphoto_the_author_thumbnail($authordata->ID);
+		echo userphoto__get_userphoto($authordata->ID, USERPHOTO_THUMBNAIL_SIZE, $before, $after, $attributes, $default_src);
 }
 
 
