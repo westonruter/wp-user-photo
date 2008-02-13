@@ -37,6 +37,10 @@ Localizations included for Spanish, German, and Dutch.
 If you value this plugin, *please donate* to ensure that it may continue to be maintained and improved.
 
 = Changelog =
+*2008-02-13: 0.8.0.1*
+
+* Removed <code>print_r()</code> from being called when using <code>$default_src</code> (thanks David!)
+
 *2008-02-04: 0.8*
 
 * Allow before and after text to be outputted when there is a user photo.
