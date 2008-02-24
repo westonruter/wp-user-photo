@@ -3,7 +3,7 @@
 Plugin Name: User Photo
 Plugin URI: http://wordpress.org/extend/plugins/user-photo/
 Description: Allows users to associate photos with their accounts by accessing their "Your Profile" page. Uploaded images are resized to fit the dimensions specified on the options page; a thumbnail image is also generated. New template tags introduced are: <code>userphoto_the_author_photo</code>, <code>userphoto_the_author_thumbnail</code>, <code>userphoto_comment_author_photo</code>, and <code>userphoto_comment_author_thumbnail</code>. Uploaded images may be moderated by administrators.
-Version: 0.8.0.1
+Version: 0.8.0.2
 Author: Weston Ruter
 Author URI: http://weston.ruter.net/
 Copyright: 2008, Weston Ruter
@@ -502,6 +502,8 @@ function userphoto_options_page(){
 		
 	#Get new updated option values, and save them
 	if( @$_POST['action'] == 'update' ) {
+		check_admin_referer('update-options-userphoto');
+		
 		$userphoto_jpeg_compression = (int)$_POST['userphoto_jpeg_compression'];
 		update_option('userphoto_jpeg_compression', $userphoto_jpeg_compression);
 		
@@ -525,8 +527,11 @@ function userphoto_options_page(){
 	?>
 	<div class="wrap">
 		<h2>User Photo Options</h2>
-		<form method="post" action="options.php" id='userphoto_options_form'>
-			<?php wp_nonce_field('update-options') ?>
+		<form method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>" id='userphoto_options_form'>
+			<?php 
+			if(function_exists('wp_nonce_field'))
+				wp_nonce_field('update-options-userphoto');
+			?>
 			<p>
 				<label>
 					<?php _e("Maximum dimension: ", 'user-photo') ?>
