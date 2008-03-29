@@ -1,7 +1,7 @@
 === User Photo ===
 Contributors: westonruter
 Tags: users, photos, images
-Tested up to: 2.3.1
+Tested up to: 2.3.3
 Stable tag: trunk
 Donate link: http://weston.ruter.net/donate/
 
@@ -37,6 +37,10 @@ Localizations included for Spanish, German, and Dutch.
 If you value this plugin, *please donate* to ensure that it may continue to be maintained and improved.
 
 = Changelog =
+*2008-03-28: 0.8.0.3*
+
+* Ensured that "unapproved" photos are not displayed. (Thanks Kyle.)
+
 *2008-02-24: 0.8.0.2*
 
 * Made minor improvement to security.

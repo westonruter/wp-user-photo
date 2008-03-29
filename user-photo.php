@@ -70,7 +70,9 @@ load_plugin_textdomain('user-photo', PLUGINDIR . '/user-photo/localization'); #(
 function userphoto__get_userphoto($user_id, $photoSize, $before, $after, $attributes, $default_src){
 	//Note: when we move to a global default user photo, we can always enter into the following conditional
 	if($user_id && ($userdata = get_userdata($user_id))){
-		if($image_file = ($photoSize == USERPHOTO_FULL_SIZE ? $userdata->userphoto_image_file : $userdata->userphoto_thumb_file)){
+		if(($userdata->userphoto_approvalstatus == USERPHOTO_APPROVED) &&
+		    $image_file = ($photoSize == USERPHOTO_FULL_SIZE ? $userdata->userphoto_image_file : $userdata->userphoto_thumb_file))
+		{
 			$width = $photoSize == USERPHOTO_FULL_SIZE ? $userdata->userphoto_image_width : $userdata->userphoto_thumb_width;
 			$height = $photoSize == USERPHOTO_FULL_SIZE ? $userdata->userphoto_image_height : $userdata->userphoto_thumb_height;
 		}
