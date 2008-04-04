@@ -37,7 +37,11 @@ Localizations included for Spanish, German, and Dutch.
 If you value this plugin, *please donate* to ensure that it may continue to be maintained and improved.
 
 = Changelog =
-*2008-03-28: 0.8.0.3*
+*2008-04-04: 0.8.0.3*
+
+* Using `wp_mail` instead of `mail` (Thanks again, Kyle.)
+
+*2008-03-28: 0.8.0.2b*
 
 * Ensured that "unapproved" photos are not displayed. (Thanks Kyle.)
 
