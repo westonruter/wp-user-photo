@@ -37,6 +37,10 @@ Localizations included for Spanish, German, and Dutch.
 If you value this plugin, *please donate* to ensure that it may continue to be maintained and improved.
 
 = Changelog =
+*2008-04-04: 0.8.0.4*
+
+* Fixed issue where incorrect path was being generated for default photo.
+
 *2008-04-04: 0.8.0.3*
 
 * Using `wp_mail` instead of `mail` (Thanks again, Kyle.)

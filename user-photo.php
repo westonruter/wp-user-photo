@@ -3,7 +3,7 @@
 Plugin Name: User Photo
 Plugin URI: http://wordpress.org/extend/plugins/user-photo/
 Description: Allows users to associate photos with their accounts by accessing their "Your Profile" page. Uploaded images are resized to fit the dimensions specified on the options page; a thumbnail image is also generated. New template tags introduced are: <code>userphoto_the_author_photo</code>, <code>userphoto_the_author_thumbnail</code>, <code>userphoto_comment_author_photo</code>, and <code>userphoto_comment_author_thumbnail</code>. Uploaded images may be moderated by administrators.
-Version: 0.8.0.3
+Version: 0.8.0.4
 Author: Weston Ruter
 Author URI: http://weston.ruter.net/
 Copyright: 2008, Weston Ruter
@@ -75,16 +75,17 @@ function userphoto__get_userphoto($user_id, $photoSize, $before, $after, $attrib
 		{
 			$width = $photoSize == USERPHOTO_FULL_SIZE ? $userdata->userphoto_image_width : $userdata->userphoto_thumb_width;
 			$height = $photoSize == USERPHOTO_FULL_SIZE ? $userdata->userphoto_image_height : $userdata->userphoto_thumb_height;
+			$src = get_option('siteurl') . '/wp-content/uploads/userphoto/' . $image_file;
 		}
-		else if(($default_src)){
-			$image_file = $default_src;
+		else if($default_src){
+			$src = $default_src;
 			$width = $height = 0;
 		}
 		else return '';
 		
 		$img = '';
 		$img .= $before;
-		$img .= '<img src="' . get_option('siteurl') . '/wp-content/uploads/userphoto/' . $image_file . '"';
+		$img .= '<img src="' . htmlspecialchars($src) . '"';
 		if(empty($attributes['alt']))
 			$img .= ' alt="' . htmlspecialchars($userdata->display_name) . '"';
 		if(empty($attributes['width']) && !empty($width))
