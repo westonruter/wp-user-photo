@@ -32,7 +32,7 @@ parameter, then they are returned as attributes of the generated <code>img</code
 
 Uploaded images may be moderated by administrators via the "Edit User" page.
 
-Localizations included for Spanish, German, and Dutch.
+Localizations included for Spanish, German, Dutch, and Polish.
 
 If you value this plugin, *please donate* to ensure that it may continue to be maintained and improved.
 
