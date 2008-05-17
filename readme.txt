@@ -29,6 +29,13 @@ The output of these template tags may be modified by passing four parameters: <c
 If the user photo exists (or <code>$default_src</code> is supplied), then the text provided in the <code>$before</code> and <code>$after</code> parameters is respectively
 prefixed and suffixed to the generated <code>img</code> tag (a common pattern in WordPress). If attributes are provided in the <code>$attributes</code>
 parameter, then they are returned as attributes of the generated <code>img</code> element. For example: <code>userphoto_the_author_photo('', '', array(style => 'border:0'))</code>
+Just added in 0.8.1 release are these two new template tags:
+
+*   <code>userphoto($userdata, $before = '', $after = '', $attributes = array(), $default_src = '')</code>
+*   <code>userphoto_thumbnail($userdata, $before = '', $after = '', $attributes = array(), $default_src = '')</code>
+
+By using these, it is uneccessary to set the global <code>$authordata</code> to display a photo. Just pass <code>$authordata</code>, <code>$curauth</code> or
+whatever variable you have which contains the user object.
 
 Uploaded images may be moderated by administrators via the "Edit User" page.
 

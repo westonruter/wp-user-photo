@@ -3,7 +3,7 @@
 Plugin Name: User Photo
 Plugin URI: http://wordpress.org/extend/plugins/user-photo/
 Description: Allows users to associate photos with their accounts by accessing their "Your Profile" page. Uploaded images are resized to fit the dimensions specified on the options page; a thumbnail image is also generated. New template tags introduced are: <code>userphoto_the_author_photo</code>, <code>userphoto_the_author_thumbnail</code>, <code>userphoto_comment_author_photo</code>, and <code>userphoto_comment_author_thumbnail</code>. Uploaded images may be moderated by administrators.
-Version: 0.8.0.5
+Version: 0.8.1
 Author: Weston Ruter
 Author URI: http://weston.ruter.net/
 Copyright: 2008, Weston Ruter
@@ -186,6 +186,15 @@ function userphoto_the_author_thumbnail($before = '', $after = '', $attributes =
 	global $authordata;
 	if(!empty($authordata) && $authordata->ID)
 		echo userphoto__get_userphoto($authordata->ID, USERPHOTO_THUMBNAIL_SIZE, $before, $after, $attributes, $default_src);
+}
+
+function userphoto($userdata, $before = '', $after = '', $attributes = array(), $default_src = ''){
+	if(!empty($userdata) && $userdata->ID)
+		echo userphoto__get_userphoto($userdata->ID, USERPHOTO_FULL_SIZE, $before, $after, $attributes, $default_src);
+}
+function userphoto_thumbnail($userdata, $before = '', $after = '', $attributes = array(), $default_src = ''){
+	if(!empty($userdata) && $userdata->ID)
+		echo userphoto__get_userphoto($userdata->ID, USERPHOTO_THUMBNAIL_SIZE, $before, $after, $attributes, $default_src);
 }
 
 
