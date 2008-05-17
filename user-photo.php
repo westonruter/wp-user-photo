@@ -178,7 +178,7 @@ function userphoto_comment_author_thumbnail($before = '', $after = '', $attribut
 		echo userphoto__get_userphoto($comment->user_id, USERPHOTO_THUMBNAIL_SIZE, $before, $after, $attributes, $default_src);
 }
 function userphoto_the_author_photo($before = '', $after = '', $attributes = array(), $default_src = ''){
-	global $authordata;
+	global $authordata, $curauthor;
 	if(!empty($authordata) && $authordata->ID)
 		echo userphoto__get_userphoto($authordata->ID, USERPHOTO_FULL_SIZE, $before, $after, $attributes, $default_src);
 }
@@ -398,33 +398,53 @@ function userphoto_display_selector_fieldset(){
     
 	#$userphoto = unserialize($userdata->userphoto);
 	
+	global $wp_version;
+	$isOldWP = floatval($wp_version) < 2.5;
+	
+	$beforeRow = $isOldWP ? "<p>" : '<tr valign="top"><th scope="row">';
+	$betweenRow = $isOldWP ? "" : '</th><td>';
+	$afterRow = $isOldWP ? "</p>" : '</td><tr>';
+	
+	
+	
     ?>
-    <fieldset id='userphoto'>
-        <script type="text/javascript">
-		var form = document.getElementById('your-profile');
-		//form.enctype = "multipart/form-data"; //FireFox, Opera, et al
-		form.encoding = "multipart/form-data"; //IE5.5
-		form.setAttribute('enctype', 'multipart/form-data'); //required for IE6 (is interpreted into "encType")
+	<script type="text/javascript">
+	var form = document.getElementById('your-profile');
+	//form.enctype = "multipart/form-data"; //FireFox, Opera, et al
+	form.encoding = "multipart/form-data"; //IE5.5
+	form.setAttribute('enctype', 'multipart/form-data'); //required for IE6 (is interpreted into "encType")
+	
+	function userphoto_onclick(){
+		var is_delete = document.getElementById('userphoto_delete').checked;
+		document.getElementById('userphoto_image_file').disabled = is_delete;
 		
-		function userphoto_onclick(){
-			var is_delete = document.getElementById('userphoto_delete').checked;
-			document.getElementById('userphoto_image_file').disabled = is_delete;
-			
-			if(document.getElementById('userphoto_approvalstatus'))
-				document.getElementById('userphoto_approvalstatus').disabled = is_delete;
-			if(document.getElementById('userphoto_rejectionreason'))
-				document.getElementById('userphoto_rejectionreason').disabled = is_delete;
-		}
-		function userphoto_approvalstatus_onchange(){
-			var select = document.getElementById('userphoto_approvalstatus');
-			document.getElementById('userphoto_rejectionreason').style.display = (select.options[select.selectedIndex].value == <?php echo USERPHOTO_REJECTED ?> ? 'block' : 'none');
-		}
-		<?php if($profileuser->userphoto_error && @$_POST['action'] == 'update'): ?>
-		window.location = "#userphoto";
-		<?php endif; ?>
+		if(document.getElementById('userphoto_approvalstatus'))
+			document.getElementById('userphoto_approvalstatus').disabled = is_delete;
+		if(document.getElementById('userphoto_rejectionreason'))
+			document.getElementById('userphoto_rejectionreason').disabled = is_delete;
+	}
+	function userphoto_approvalstatus_onchange(){
+		var select = document.getElementById('userphoto_approvalstatus');
+		document.getElementById('userphoto_rejectionreason').style.display = (select.options[select.selectedIndex].value == <?php echo USERPHOTO_REJECTED ?> ? 'block' : 'none');
+	}
+	<?php if($profileuser->userphoto_error && @$_POST['action'] == 'update'): ?>
+	window.location = "#userphoto";
+	<?php endif; ?>
+	
+	</script>
+    <?php if($isOldWP): ?>
+		<fieldset id='userphoto'>
+		<legend><?php echo $isSelf ? _e("Your Photo", 'user-photo') : _e("User Photo", 'user-photo') ?></legend>
+	<?php else: ?>
+		<table class='form-table' id="userphoto">
+			<tr>
+				<th>
+					<!--<label for="userphoto_image_file">--><?php echo $isSelf ? _e("Your Photo", 'user-photo') : _e("User Photo", 'user-photo') ?><!--</label>-->
+				</th>
+				<td>
+	<?php endif; ?>
 		
-        </script>
-        <legend><?php echo $isSelf ? _e("Your Photo", 'user-photo') : _e("User Photo", 'user-photo') ?></legend>
+	
         <?php if($profileuser->userphoto_image_file): ?>
             <p class='image'><img src="<?php echo get_option('siteurl') . '/wp-content/uploads/userphoto/' . $profileuser->userphoto_image_file . "?" . rand() ?>" alt="Full size image" /><br />
 			Full size
@@ -455,15 +475,11 @@ function userphoto_display_selector_fieldset(){
 		<?php endif; ?>
         <p id='userphoto_image_file_control'>
         <label><?php echo _e("Upload image file:", 'user-photo') ?>
+		<input type="file" name="userphoto_image_file" id="userphoto_image_file" />
 		<span class='field-hint'>(<?php
-		//if(!get_option('userphoto_autoresize'))
-		//	printf(__("max dimensions %d&times;%d;"), get_option('userphoto_maximum_dimension'), get_option('userphoto_maximum_dimension'));
 		printf(__("max upload size %s"),ini_get("upload_max_filesize"));
-		?>)</span>
-		<input type="file" name="userphoto_image_file" id="userphoto_image_file" /></label>
+		?>)</span></label>
 		</p>
-        <!--<em>or</em>
-        <label for="uphoto-fileURL">Image URL: </label><input type="url" name="uphoto-fileURL" id="uphoto-fileURL" value="http://" /><br />-->
         <?php if($current_user->has_cap('edit_users') && ($profileuser->ID != $current_user->ID) && $profileuser->userphoto_image_file): ?>
 			<p id="userphoto-approvalstatus-controls" <?php if($profileuser->userphoto_approvalstatus == USERPHOTO_PENDING) echo "class='pending'" ?>>
 			<label><?php _e("Approval status:", 'user-photo') ?>
@@ -481,7 +497,15 @@ function userphoto_display_selector_fieldset(){
 		<?php if($profileuser->userphoto_image_file): ?>
 		<p><label><input type="checkbox" name="userphoto_delete" id="userphoto_delete" onclick="userphoto_onclick()" /> <?php _e('Delete photo?', 'user-photo')?></label></p>
 		<?php endif; ?>
-    </fieldset>
+    
+    <?php if($isOldWP): ?>
+		</fieldset>
+	<?php else: ?>
+		</td></tr></table>
+	<?php endif; ?>
+		
+	
+	
     <?php
 }
 add_action('show_user_profile', 'userphoto_display_selector_fieldset');
@@ -523,9 +547,16 @@ function userphoto_options_page(){
 		update_option('userphoto_level_moderated', $userphoto_level_moderated);
 		
 		?>
-		<div class="updated"><p><strong><?php _e('Options saved.' ); ?></strong></p></div>
+		<div id="message" class="updated fade"><p><strong><?php _e('Options saved.' ); ?></strong></p></div>
 		<?php
 	}
+	
+	global $wp_version;
+	$isOldWP = floatval($wp_version) < 2.5;
+	
+	$beforeRow = $isOldWP ? "<p>" : '<tr valign="top"><th scope="row">';
+	$betweenRow = $isOldWP ? "" : '</th><td>';
+	$afterRow = $isOldWP ? "</p>" : '</td><tr>';
 	
 	?>
 	<div class="wrap">
@@ -534,63 +565,75 @@ function userphoto_options_page(){
 			<?php 
 			if(function_exists('wp_nonce_field'))
 				wp_nonce_field('update-options-userphoto');
+				
+				if(!$isOldWP)
+					echo "<table class='form-table'>";
 			?>
-			<p>
-				<label>
+			<?php echo $beforeRow ?>
+				<label for="userphoto_maximum_dimension">
 					<?php _e("Maximum dimension: ", 'user-photo') ?>
-					<input type="number" min="1" step="1" size="3" name="userphoto_maximum_dimension" value="<?php echo $userphoto_maximum_dimension ?>" />px
 				</label>
-			</p>
-			<p>
-				<label>
+				<?php echo $betweenRow ?>
+				<input type="number" min="1" step="1" size="3" id="userphoto_maximum_dimension" name="userphoto_maximum_dimension" value="<?php echo $userphoto_maximum_dimension ?>" />px
+			<?php echo $afterRow ?>
+			<?php echo $beforeRow ?>
+				<label for="userphoto_thumb_dimension">
 					<?php _e("Thumbnail dimension: ", 'user-photo') ?>
-					<input type="number" min="1" step="1" size="3" name="userphoto_thumb_dimension" value="<?php echo $userphoto_thumb_dimension ?>" />px
 				</label>
-			</p>
-			<p>
-				<label>
+				<?php echo $betweenRow ?>
+				<input type="number" min="1" step="1" size="3" id="userphoto_thumb_dimension" name="userphoto_thumb_dimension" value="<?php echo $userphoto_thumb_dimension ?>" />px
+			<?php echo $afterRow ?>
+			<?php echo $beforeRow ?>
+				<label for="userphoto_jpeg_compression">
 					<?php _e("JPEG compression: ", 'user-photo') ?>
-					<input type="range" min="1" max="100" step="1" size="3" name="userphoto_jpeg_compression" value="<?php echo $userphoto_jpeg_compression ?>" />%
 				</label>
-			</p>
-			<p>
-				<label>
+				<?php echo $betweenRow ?>
+				<input type="range" min="1" max="100" step="1" size="3" id="userphoto_jpeg_compression" name="userphoto_jpeg_compression" value="<?php echo $userphoto_jpeg_compression ?>" />%
+			<?php echo $afterRow ?>
+			<?php echo $beforeRow ?>
+				<label for="userphoto_admin_notified">
 					<?php _e("Notify this administrator by email when user photo needs approval: ", 'user-photo') ?>
-					<select id='userphoto_admin_notified' name="userphoto_admin_notified">
-						<option value="0" class='none'>(none)</option>
-						<?php
-						global $wpdb;
-						$users = $wpdb->get_results("SELECT ID FROM $wpdb->users ORDER BY user_login");
-						foreach($users as $user){
-							$u = get_userdata($user->ID);
-							if($u->user_level == 10){ #if($u->has_cap('administrator')){
-								print "<option value='" . $u->ID . "'";
-								if($userphoto_admin_notified == $u->ID)
-									print " selected='selected'";
-								print ">" . $u->user_login . "</option>";
-							}
-						}
-						?>
-					</select>
 				</label>
-			</p>
-			<p>
-				<label>
+				<?php echo $betweenRow ?>
+				<select id='userphoto_admin_notified' name="userphoto_admin_notified">
+					<option value="0" class='none'>(none)</option>
+					<?php
+					global $wpdb;
+					$users = $wpdb->get_results("SELECT ID FROM $wpdb->users ORDER BY user_login");
+					foreach($users as $user){
+						$u = get_userdata($user->ID);
+						if($u->user_level == 10){ #if($u->has_cap('administrator')){
+							print "<option value='" . $u->ID . "'";
+							if($userphoto_admin_notified == $u->ID)
+								print " selected='selected'";
+							print ">" . $u->user_login . "</option>";
+						}
+					}
+					?>
+				</select>
+			<?php echo $afterRow ?>
+			<?php echo $beforeRow ?>
+				<label for="userphoto_level_moderated">
 					<!--<input type="checkbox" id="userphoto_do_moderation" onclick="document.getElementById('userphoto_level_moderated').disabled = !this.checked" <?php /*if(isset($userphoto_level_moderated)) echo ' checked="checked"'*/ ?> />-->
 					<?php _e("Require user photo moderation for all users at or below this level: ", 'user-photo') ?>
-					<select name="userphoto_level_moderated" id="userphoto_level_moderated">
-						<option value="-1" <?php if($userphoto_level_moderated == -1) echo ' selected="selected"' ?> class='none'>(none)</option>
-						<option value="0" <?php if($userphoto_level_moderated == 0) echo ' selected="selected"' ?>>Subscriber</option>
-						<option value="1" <?php if($userphoto_level_moderated == 1) echo ' selected="selected"' ?>>Contributor</option>
-						<option value="2" <?php if($userphoto_level_moderated == 2) echo ' selected="selected"' ?>>Author</option>
-						<option value="7" <?php if($userphoto_level_moderated == 7) echo ' selected="selected"' ?>>Editor</option>
-					</select>
 				</label>
+				<?php echo $betweenRow ?>
+				<select name="userphoto_level_moderated" id="userphoto_level_moderated">
+					<option value="-1" <?php if($userphoto_level_moderated == -1) echo ' selected="selected"' ?> class='none'>(none)</option>
+					<option value="0" <?php if($userphoto_level_moderated == 0) echo ' selected="selected"' ?>>Subscriber</option>
+					<option value="1" <?php if($userphoto_level_moderated == 1) echo ' selected="selected"' ?>>Contributor</option>
+					<option value="2" <?php if($userphoto_level_moderated == 2) echo ' selected="selected"' ?>>Author</option>
+					<option value="7" <?php if($userphoto_level_moderated == 7) echo ' selected="selected"' ?>>Editor</option>
+				</select>
 				<!--<script type="text/javascript">
 				document.getElementById('userphoto_do_moderation').onclick();
 				</script>-->
-			</p>
-	
+			<?php echo $afterRow ?>
+			
+			<?php
+				if(!$isOldWP)
+					echo "</table>";
+			?>
 			<input type="hidden" name="action" value="update" />
 			<input type="hidden" name="page_options" value="userphoto_jpeg_compression,userphoto_admin_notified,userphoto_maximum_dimension,userphoto_thumb_dimension,userphoto_level_moderated" />
 			

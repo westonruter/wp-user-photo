@@ -1,7 +1,7 @@
 === User Photo ===
 Contributors: westonruter
 Tags: users, photos, images
-Tested up to: 2.3.3
+Tested up to: 2.5.1
 Stable tag: trunk
 Donate link: http://weston.ruter.net/donate/
 
@@ -37,6 +37,10 @@ Localizations included for Spanish, German, Dutch, and Polish.
 If you value this plugin, *please donate* to ensure that it may continue to be maintained and improved.
 
 = Changelog =
+*2008-05-17: 0.8.1*
+
+* Finally updated the plugin for WP 2.5. Note that it still worked for 2.5, it's just the admin interfaces needed to be updated.
+
 *2008-04-23: 0.8.0.5*
 
 * Added localization for Polish (thanks Maciej!)

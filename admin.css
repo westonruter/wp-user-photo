@@ -21,6 +21,9 @@
 	/*padding:3px;*/
 	padding:4px 0 4px 5px;
 }
+#userphoto-approvalstatus-controls select {
+	vertical-align:middle;
+}
 
 #userphoto_level_moderated option.none,
 #userphoto_admin_notified option.none {
@@ -34,6 +37,7 @@
 	float:left;
 	margin-right:20px;
 	margin-bottom:0;
+	background-color:white;
 }
 #userphoto hr {
 	clear:both;
