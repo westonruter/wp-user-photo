@@ -46,7 +46,7 @@ If you value this plugin, *please donate* to ensure that it may continue to be m
 = Changelog =
 *2008-05-17: 0.8.1*
 
-* Finally updated the plugin for WP 2.5. Note that it still worked for 2.5, it's just the admin interfaces needed to be updated.
+* Finally updated the plugin for WP 2.5. Note that it still worked for 2.5, it's just the admin interfaces needed to be updated. Also added <code>userphoto()</code> and <code>userphoto_thumbnail()</code> template tags.
 
 *2008-04-23: 0.8.0.5*
 
