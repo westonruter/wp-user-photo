@@ -1,7 +1,7 @@
 === User Photo ===
 Contributors: westonruter
 Tags: users, photos, images
-Tested up to: 2.5.1
+Tested up to: 2.6
 Stable tag: trunk
 Donate link: http://weston.ruter.net/donate/
 
@@ -44,6 +44,10 @@ Localizations included for Spanish, German, Dutch, Polish, and Russian.
 If you value this plugin, *please donate* to ensure that it may continue to be maintained and improved.
 
 = Changelog =
+*2008-08-01: 0.8.2*
+
+* Verified that works in WP 2.6; added note explaining what the error message regarding what "image resizing not available" means... namely that the GD module is not installed.
+
 *2008-05-29: 0.8.1*
 
 * Added localization for Russian (thanks Kyr!)

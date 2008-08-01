@@ -3,7 +3,7 @@
 Plugin Name: User Photo
 Plugin URI: http://wordpress.org/extend/plugins/user-photo/
 Description: Allows users to associate photos with their accounts by accessing their "Your Profile" page. Uploaded images are resized to fit the dimensions specified on the options page; a thumbnail image is also generated. New template tags introduced are: <code>userphoto_the_author_photo</code>, <code>userphoto_the_author_thumbnail</code>, <code>userphoto_comment_author_photo</code>, and <code>userphoto_comment_author_thumbnail</code>. Uploaded images may be moderated by administrators.
-Version: 0.8.1
+Version: 0.8.2
 Author: Weston Ruter
 Author URI: http://weston.ruter.net/
 Copyright: 2008, Weston Ruter
@@ -32,7 +32,11 @@ if(!function_exists('imagecopyresampled')){
 	array_splice($active_plugins, array_search(USERPHOTO_PLUGIN_IDENTIFIER, $active_plugins), 1); //preg_replace('{^.+(?=[^/]+/[^/]+)}', '', __FILE__)
 	update_option('active_plugins', $active_plugins);
 	
-	trigger_error(__("User Photo plugin not usable on this system because image resizing is not available, specifically the imagecopyresampled() and related functions. It has been deactivated.", 'user-photo'), E_USER_ERROR);
+	trigger_error(
+		__("User Photo plugin not usable on this system because image resizing is not available, specifically the imagecopyresampled() and related functions. It has been deactivated.", 'user-photo') .
+		' '. 
+		__("The required <a href='http://www.php.net/gd'>GD module</a> is not available on your system.", 'user-photo')
+	, E_USER_ERROR);
 }
 
 
