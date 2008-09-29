@@ -68,6 +68,7 @@ If you value this plugin, *please donate* to ensure that it may continue to be m
 
 = Changelog =
 *2008-09-22: 0.9*
+
 * First argument to `userphoto()` and `userphoto_thumbnail()` may now just be a user ID or user login name in addition to a user object.
 * New "Serve Avatar as Fallback" option; this is disabled by default.
 * New boolean function `userphoto_exists($user)` which returns true if the user has a photo and false if they do not. Argument `$user` may be user object, ID, or login name.
