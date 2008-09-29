@@ -1,7 +1,7 @@
 === User Photo ===
 Contributors: westonruter
 Tags: users, photos, images
-Tested up to: 2.6
+Tested up to: 2.6.2
 Stable tag: trunk
 Donate link: http://weston.ruter.net/donate/
 
@@ -31,11 +31,34 @@ prefixed and suffixed to the generated <code>img</code> tag (a common pattern in
 parameter, then they are returned as attributes of the generated <code>img</code> element. For example: <code>userphoto_the_author_photo('', '', array(style => 'border:0'))</code>
 Just added in 0.8.1 release are these two new template tags:
 
-*   <code>userphoto($userdata, $before = '', $after = '', $attributes = array(), $default_src = '')</code>
-*   <code>userphoto_thumbnail($userdata, $before = '', $after = '', $attributes = array(), $default_src = '')</code>
+*   <code>userphoto($user, $before = '', $after = '', $attributes = array(), $default_src = '')</code>
+*   <code>userphoto_thumbnail($user, $before = '', $after = '', $attributes = array(), $default_src = '')</code>
 
 By using these, it is uneccessary to set the global <code>$authordata</code> to display a photo. Just pass <code>$authordata</code>, <code>$curauth</code> or
-whatever variable you have which contains the user object.
+whatever variable you have which contains the user object, or (as of version 0.9), pass in a user ID or a user login name. Also in version 0.9 the
+boolean function `userphoto_exists($user)` has been introduced which returns true if the user has a photo and false if they do not.
+Argument `$user` may be user object, ID, or login name. This function can be used along with avatars:
+
+	if(userphoto_exists($user))
+		userphoto($user);
+	else
+		echo get_avatar($user->ID, 96);
+
+Or if the new "Serve Avatar as Fallback" option is turned on, then the avatar will be served by any of the regular calls to display the user photo:
+
+	//this will display the user's avatar if they don't have a user photo,
+	//  and if "Serve Avatar as Fallback" is turned on
+	userphoto($user);
+
+Additionally, all of the regular function calls to display the user photo may be done away with alltogether if the new "Override Avatar with User Photo"
+option is enabled:
+
+	//both will display the user photo if it exists
+	//  and if "Override Avatar with User Photo" is turned on
+	echo get_avatar($user_id);
+	echo get_avatar($user->user_email);
+
+Both options "Serve Avatar as Fallback" and "Override Avatar with User Photo" require that the 'Avatar Display' setting under Discussion be set to "Show". 
 
 Uploaded images may be moderated by administrators via the "Edit User" page.
 
@@ -44,6 +67,15 @@ Localizations included for Spanish, German, Dutch, Polish, and Russian.
 If you value this plugin, *please donate* to ensure that it may continue to be maintained and improved.
 
 = Changelog =
+*2008-09-22: 0.9*
+* First argument to `userphoto()` and `userphoto_thumbnail()` may now just be a user ID or user login name in addition to a user object.
+* New "Serve Avatar as Fallback" option; this is disabled by default.
+* New boolean function `userphoto_exists($user)` which returns true if the user has a photo and false if they do not. Argument `$user` may be user object, ID, or login name.
+* New option "Override Avatar with User Photo"; disabled by default.
+* Adding `class="photo"` by default if no class attribute is supplied
+* Fixed issue where thumbnail (and associated usermeta) wasn't being deleted along with the full-size photo (thanks Oliver).
+* Now using `wp_upload_dir()` to get the basedir for where the userphoto directory will be located. 
+
 *2008-08-01: 0.8.2*
 
 * Verified that works in WP 2.6; added note explaining what the error message regarding what "image resizing not available" means... namely that the GD module is not installed.
@@ -114,6 +146,8 @@ If you value this plugin, *please donate* to ensure that it may continue to be m
 * Fixed the inclusion of the stylesheet for the options page
 
 = Todo =
+1. When changing the authorization level, all previous users' photos should be automatically approved if they meet the minimum user level
+1. Include a get_userphoto() and get_userphoto_thumbnail() ?
 1. Add a management page to allow admins to quickly approve/reject user photos.
 1. Add option so that when a photo is rejected, the user is notified.
 1. Restrict image types acceptable?

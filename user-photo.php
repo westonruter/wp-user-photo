@@ -3,7 +3,7 @@
 Plugin Name: User Photo
 Plugin URI: http://wordpress.org/extend/plugins/user-photo/
 Description: Allows users to associate photos with their accounts by accessing their "Your Profile" page. Uploaded images are resized to fit the dimensions specified on the options page; a thumbnail image is also generated. New template tags introduced are: <code>userphoto_the_author_photo</code>, <code>userphoto_the_author_thumbnail</code>, <code>userphoto_comment_author_photo</code>, and <code>userphoto_comment_author_thumbnail</code>. Uploaded images may be moderated by administrators.
-Version: 0.8.2
+Version: 0.9
 Author: Weston Ruter
 Author URI: http://weston.ruter.net/
 Copyright: 2008, Weston Ruter
@@ -39,7 +39,6 @@ if(!function_exists('imagecopyresampled')){
 	, E_USER_ERROR);
 }
 
-
 $userphoto_validtypes = array(
 	"image/jpeg" => true,
 	"image/pjpeg" => true,
@@ -66,12 +65,58 @@ add_option("userphoto_maximum_dimension", 150);
 add_option("userphoto_thumb_dimension", 80);
 add_option("userphoto_admin_notified", 0); //0 means disable
 add_option("userphoto_level_moderated", 2); //Note: -1 means disable
+add_option("userphoto_use_avatar_fallback", false);
+add_option("userphoto_override_avatar", false);
+$userphoto_using_avatar_fallback = false;
+$userphoto_prevent_override_avatar = false;
 
 # Load up the localization file if we're using WordPress in a different language
 # Place it in the "localization" folder and name it "user-photo-[value in wp-config].mo"
 load_plugin_textdomain('user-photo', PLUGINDIR . '/user-photo/localization'); #(thanks Pakus)
 
+function userphoto__init(){
+	if(get_option('userphoto_override_avatar') && !is_admin())
+		add_filter('get_avatar', 'userphoto_filter_get_avatar', 10, 4);
+}
+add_action('init', 'userphoto__init');
+
+function userphoto_filter_get_avatar($avatar, $id_or_email, $size, $default){
+	global $userphoto_using_avatar_fallback, $wpdb, $userphoto_prevent_override_avatar;
+	if($userphoto_using_avatar_fallback)
+		return $avatar;
+	
+	if(is_object($id_or_email)){
+		if($id_or_email->ID)
+			$id_or_email = $id_or_email->ID;
+		//Comment
+		else if($id_or_email->user_id)
+			$id_or_email = $id_or_email->user_id;
+		else if($id_or_email->comment_author_email)
+			$id_or_email = $id_or_email->comment_author_email;
+	}
+
+	if(is_numeric($id_or_email))
+		$userid = (int)$id_or_email;
+	else if(is_string($id_or_email))
+		$userid = (int)$wpdb->get_var("SELECT ID FROM $wpdb->users WHERE user_email = '" . mysql_escape_string($id_or_email) . "'");
+	
+	if(!$userid)
+		return $avatar;
+	
+	//Figure out which one is closest to the size that we have for the full or the thumbnail
+	$full_dimension = get_option('userphoto_maximum_dimension');
+	$small_dimension = get_option('userphoto_thumb_dimension');
+	$userphoto_prevent_override_avatar = true;
+	$img = userphoto__get_userphoto($userid, (abs($full_dimension - $size) < abs($small_dimension - $size)) ? USERPHOTO_FULL_SIZE : USERPHOTO_THUMBNAIL_SIZE, '', '', array(), '');
+	$userphoto_prevent_override_avatar = false;
+	if($img)
+		return $img;
+
+	return $avatar;
+}
+
 function userphoto__get_userphoto($user_id, $photoSize, $before, $after, $attributes, $default_src){
+	global $userphoto_prevent_override_avatar;
 	//Note: when we move to a global default user photo, we can always enter into the following conditional
 	if($user_id && ($userdata = get_userdata($user_id))){
 		if(($userdata->userphoto_approvalstatus == USERPHOTO_APPROVED) &&
@@ -79,14 +124,30 @@ function userphoto__get_userphoto($user_id, $photoSize, $before, $after, $attrib
 		{
 			$width = $photoSize == USERPHOTO_FULL_SIZE ? $userdata->userphoto_image_width : $userdata->userphoto_thumb_width;
 			$height = $photoSize == USERPHOTO_FULL_SIZE ? $userdata->userphoto_image_height : $userdata->userphoto_thumb_height;
-			$src = get_option('siteurl') . '/wp-content/uploads/userphoto/' . $image_file;
+			
+			$upload_dir = wp_upload_dir();
+			$src = trailingslashit($upload_dir['baseurl']) . 'userphoto/' . $image_file;
 		}
 		else if($default_src){
 			$src = $default_src;
 			$width = $height = 0;
 		}
+		else if(get_option('userphoto_use_avatar_fallback') && !$userphoto_prevent_override_avatar){
+			$width = $height = get_option($photoSize == USERPHOTO_FULL_SIZE ? 'userphoto_maximum_dimension' : 'userphoto_thumb_dimension');
+			global $userphoto_using_avatar_fallback;
+			$userphoto_using_avatar_fallback = true;
+			$img = get_avatar($user_id, $width);
+			$userphoto_using_avatar_fallback = false;
+			if(!$img)
+				return;
+			if(!preg_match('{src=([\'"])(.+?)\1}', $img, $matches))
+				return;
+			$src = str_replace('&amp;', '&', $matches[2]);
+			if(preg_match('{class=([\'"])(.+?)\1}', $img, $matches))
+				$attributes['class'] .= ' ' . $matches[2];
+		}
 		else return '';
-		
+
 		$img = '';
 		$img .= $before;
 		$img .= '<img src="' . htmlspecialchars($src) . '"';
@@ -96,6 +157,8 @@ function userphoto__get_userphoto($user_id, $photoSize, $before, $after, $attrib
 			$img .= ' width="' . htmlspecialchars($width) . '"';
 		if(empty($attributes['height']) && !empty($height))
 			$img .= ' height="' . htmlspecialchars($height) . '"';
+		if(empty($attributes['class']))
+			$img .= ' class="photo"';
 		if(!empty($attributes)){
 			foreach($attributes as $name => $value){
 				$img .= " $name=\"" . htmlspecialchars($value) . '"';
@@ -121,6 +184,30 @@ function userphoto__get_userphoto($user_id, $photoSize, $before, $after, $attrib
 	}
 	
 }
+
+
+function userphoto_exists($user){
+	if(is_numeric($user))
+		$userid = intval($user);
+	else if(is_object($user) && @$user->ID)
+		$userid = $user->ID;
+	else if(is_string($user)){
+		$userdata = get_userdatabylogin($user);
+		if(!$userdata)
+			return false;
+		$userid = $userdata->ID;
+	}
+	else return false;
+	
+	if(!isset($userdata))
+		$userdata = get_userdata($userid);
+	if(!$userdata || $userdata->userphoto_approvalstatus != USERPHOTO_APPROVED)
+		return false;
+	
+	return true;
+}
+
+
 //
 //function userphoto_get_userphoto_the_author_photo($user_id = false){
 //	#global $authordata;
@@ -192,13 +279,35 @@ function userphoto_the_author_thumbnail($before = '', $after = '', $attributes =
 		echo userphoto__get_userphoto($authordata->ID, USERPHOTO_THUMBNAIL_SIZE, $before, $after, $attributes, $default_src);
 }
 
-function userphoto($userdata, $before = '', $after = '', $attributes = array(), $default_src = ''){
-	if(!empty($userdata) && $userdata->ID)
-		echo userphoto__get_userphoto($userdata->ID, USERPHOTO_FULL_SIZE, $before, $after, $attributes, $default_src);
+function userphoto($user, $before = '', $after = '', $attributes = array(), $default_src = ''){
+	if(is_numeric($user))
+		$userid = intval($user);
+	else if(is_object($user) && @$user->ID)
+		$userid = $user->ID;
+	else if(is_string($user)){
+		$user = get_userdatabylogin($user);
+		if(!$user)
+			return;
+		$userid = $user->ID;
+	}
+	else return;
+	
+	echo userphoto__get_userphoto($userid, USERPHOTO_FULL_SIZE, $before, $after, $attributes, $default_src);
 }
-function userphoto_thumbnail($userdata, $before = '', $after = '', $attributes = array(), $default_src = ''){
-	if(!empty($userdata) && $userdata->ID)
-		echo userphoto__get_userphoto($userdata->ID, USERPHOTO_THUMBNAIL_SIZE, $before, $after, $attributes, $default_src);
+function userphoto_thumbnail($user, $before = '', $after = '', $attributes = array(), $default_src = ''){
+	if(is_numeric($user))
+		$userid = intval($user);
+	else if(is_object($user) && @$user->ID)
+		$userid = $user->ID;
+	else if(is_string($user)){
+		$user = get_userdatabylogin($user);
+		if(!$user)
+			return;
+		$userid = $user->ID;
+	}
+	else return;
+	
+	echo userphoto__get_userphoto($userid, USERPHOTO_THUMBNAIL_SIZE, $before, $after, $attributes, $default_src);
 }
 
 
@@ -212,17 +321,23 @@ function userphoto_profile_update($userID){
 	if(@$_POST['userphoto_delete']){
 		delete_usermeta($userID, "userphoto_error");
 		if($userdata->userphoto_image_file){
-			$imagepath = ABSPATH . "/wp-content/uploads/userphoto/" . basename($userdata->userphoto_image_file);
-			$thumbpath = ABSPATH . "/wp-content/uploads/userphoto/" . basename($userdata->userphoto_image_file);
+			$upload_dir = wp_upload_dir();
+			$bdir = trailingslashit($upload_dir['basedir']) . 'userphoto/';
+			$imagepath = $bdir . basename($userdata->userphoto_image_file);
+			$thumbpath = $bdir . basename($userdata->userphoto_thumb_file);
 			
 			if(file_exists($imagepath) && !@unlink($imagepath)){
 				update_usermeta($userID, 'userphoto_error', __("Unable to delete photo.", 'user-photo'));
 			}
 			else {
-				delete_usermeta($userID, "userphoto_image_file");
+				@unlink($thumbpath);
 				delete_usermeta($userID, "userphoto_approvalstatus");
+				delete_usermeta($userID, "userphoto_image_file");
 				delete_usermeta($userID, "userphoto_image_width");
 				delete_usermeta($userID, "userphoto_image_height");
+				delete_usermeta($userID, "userphoto_thumb_file");
+				delete_usermeta($userID, "userphoto_thumb_width");
+				delete_usermeta($userID, "userphoto_thumb_height");
 			}
 		}
 	}
@@ -287,7 +402,9 @@ function userphoto_profile_update($userID){
 			}
 			
 			if(!$error){
-				$dir = ABSPATH . "/wp-content/uploads/userphoto";
+				$upload_dir = wp_upload_dir();
+				$dir = trailingslashit($upload_dir['basedir']) . 'userphoto';
+				
 				#$umask = umask(0);
 				if(!file_exists($dir) && !mkdir($dir, 0777))
 					$error = __("The userphoto upload content directory does not exist and could not be created. Please ensure that you have write permissions for the /wp-content/uploads/ directory.", 'user-photo');
@@ -375,10 +492,14 @@ add_action('profile_update', 'userphoto_profile_update');
 
 function userphoto_delete_user($userID){
 	$userdata = get_userdata($userID);
+	
+	$upload_dir = wp_upload_dir();
+	$bdir = trailingslashit($upload_dir['basedir']) . 'userphoto/';
+	
 	if($userdata->userphoto_image_file)
-		@unlink(ABSPATH . "/wp-content/uploads/userphoto/" . basename($userdata->userphoto_image_file));
+		@unlink($bdir . basename($userdata->userphoto_image_file));
 	if($userdata->userphoto_thumb_file)
-		@unlink(ABSPATH . "/wp-content/uploads/userphoto/" . basename($userdata->userphoto_thumb_file));
+		@unlink($bdir . basename($userdata->userphoto_thumb_file));
 }
 add_action('delete_user', 'userphoto_delete_user');
 
@@ -459,10 +580,14 @@ function userphoto_display_selector_fieldset(){
 		
 	
         <?php if($profileuser->userphoto_image_file): ?>
-            <p class='image'><img src="<?php echo get_option('siteurl') . '/wp-content/uploads/userphoto/' . $profileuser->userphoto_image_file . "?" . rand() ?>" alt="Full size image" /><br />
+			<?php
+			$upload_dir = wp_upload_dir();
+			$bdir = trailingslashit($upload_dir['baseurl']) . 'userphoto/';
+			?>
+            <p class='image'><img src="<?php echo $bdir . $profileuser->userphoto_image_file . "?" . rand() ?>" alt="Full size image" /><br />
 			Full size
 			</p>
-			<p class='image'><img src="<?php echo get_option('siteurl') . '/wp-content/uploads/userphoto/' . $profileuser->userphoto_thumb_file . "?" . rand() ?>" alt="Thumbnail image" /><br />
+			<p class='image'><img src="<?php echo $bdir . $profileuser->userphoto_thumb_file . "?" . rand() ?>" alt="Thumbnail image" /><br />
 			Thumb
 			</p>
 			<hr />
@@ -539,6 +664,8 @@ function userphoto_options_page(){
 	$userphoto_thumb_dimension = get_option( 'userphoto_thumb_dimension' );
 	$userphoto_admin_notified = get_option( 'userphoto_admin_notified' );
 	$userphoto_level_moderated = get_option( 'userphoto_level_moderated' );
+	$userphoto_use_avatar_fallback = get_option('userphoto_use_avatar_fallback');
+	$userphoto_override_avatar = get_option('userphoto_override_avatar');
 		
 	#Get new updated option values, and save them
 	if( @$_POST['action'] == 'update' ) {
@@ -558,6 +685,12 @@ function userphoto_options_page(){
 		
 		$userphoto_level_moderated = (int)$_POST['userphoto_level_moderated'];
 		update_option('userphoto_level_moderated', $userphoto_level_moderated);
+		
+		$userphoto_use_avatar_fallback = !empty($_POST['userphoto_use_avatar_fallback']);
+		update_option('userphoto_use_avatar_fallback', $userphoto_use_avatar_fallback);
+		
+		$userphoto_override_avatar = !empty($_POST['userphoto_override_avatar']);
+		update_option('userphoto_override_avatar', $userphoto_override_avatar);
 		
 		?>
 		<div id="message" class="updated fade"><p><strong><?php _e('Options saved.' ); ?></strong></p></div>
@@ -595,6 +728,22 @@ function userphoto_options_page(){
 				</label>
 				<?php echo $betweenRow ?>
 				<input type="number" min="1" step="1" size="3" id="userphoto_thumb_dimension" name="userphoto_thumb_dimension" value="<?php echo $userphoto_thumb_dimension ?>" />px
+			<?php echo $afterRow ?>
+			<?php echo $beforeRow ?>
+				<label for="userphoto_use_avatar_fallback">
+					<?php _e("Serve Avatar as Fallback: ", 'user-photo') ?>
+				</label>
+				<?php echo $betweenRow ?>
+				<input type="checkbox" value='Y' id="userphoto_use_avatar_fallback" name="userphoto_use_avatar_fallback" <?php if($userphoto_use_avatar_fallback) echo ' checked="checked"'; ?> /><br />
+				<?php _e("In case the user does not have a photo uploaded or approved, their avatar will be fetched for them. Respects the 'Avatar Display' setting under <b>Discussion</b>.", 'user-photo') ?>
+			<?php echo $afterRow ?>
+			<?php echo $beforeRow ?>
+				<label for="userphoto_override_avatar">
+					<?php _e("Override Avatar with User Photo: ", 'user-photo') ?>
+				</label>
+				<?php echo $betweenRow ?>
+				<input type="checkbox" value='Y' id="userphoto_override_avatar" name="userphoto_override_avatar" <?php if($userphoto_override_avatar) echo ' checked="checked"'; ?> /><br />
+				<?php _e("When making calls to <code>get_avatar()</code>, the user's photo will be used instead if it is available. Respects the 'Avatar Display' setting under <b>Discussion</b>.", 'user-photo') ?>
 			<?php echo $afterRow ?>
 			<?php echo $beforeRow ?>
 				<label for="userphoto_jpeg_compression">
