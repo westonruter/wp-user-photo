@@ -3,7 +3,7 @@
 Plugin Name: User Photo
 Plugin URI: http://wordpress.org/extend/plugins/user-photo/
 Description: Allows users to associate photos with their accounts by accessing their "Your Profile" page. Uploaded images are resized to fit the dimensions specified on the options page; a thumbnail image is also generated. New template tags introduced are: <code>userphoto_the_author_photo</code>, <code>userphoto_the_author_thumbnail</code>, <code>userphoto_comment_author_photo</code>, and <code>userphoto_comment_author_thumbnail</code>. Uploaded images may be moderated by administrators.
-Version: 0.9
+Version: 0.9.1
 Author: Weston Ruter
 Author URI: http://weston.ruter.net/
 Copyright: 2008, Weston Ruter
@@ -407,7 +407,7 @@ function userphoto_profile_update($userID){
 				
 				#$umask = umask(0);
 				if(!file_exists($dir) && !mkdir($dir, 0777))
-					$error = __("The userphoto upload content directory does not exist and could not be created. Please ensure that you have write permissions for the /wp-content/uploads/ directory.", 'user-photo');
+					$error = sprintf(__("The userphoto upload content directory does not exist and could not be created. Please ensure that you have write permissions for the %s directory. Did you put slash at the beginning of the upload path in Misc. settings? It should be a path relative to the WordPress root directory.", 'user-photo'), $dir);
 				#umask($umask);
 				
 				if(!$error){
@@ -418,7 +418,7 @@ function userphoto_profile_update($userID){
 					$thumbpath = $dir . '/' . $thumbfile;
 					
 					if(!move_uploaded_file($tmppath, $imagepath)){
-						$error = __("Unable to move the file to the user photo upload content directory.", 'user-photo');
+						$error = sprintf(__("Unable to place the user photo at: %s", 'user-photo'), $imagepath);
 					}
 					else {
 						chmod($imagepath, 0666);

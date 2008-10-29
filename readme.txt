@@ -67,6 +67,11 @@ Localizations included for Spanish, German, Dutch, Polish, and Russian.
 If you value this plugin, *please donate* to ensure that it may continue to be maintained and improved.
 
 = Changelog =
+
+*2008-09-22: 0.9.1*
+
+* Updated error messages to be more helpful (includes the paths in question). This will help debug some of the issues that have been raised on the forums lately.
+
 *2008-09-22: 0.9*
 
 * First argument to `userphoto()` and `userphoto_thumbnail()` may now just be a user ID or user login name in addition to a user object.
