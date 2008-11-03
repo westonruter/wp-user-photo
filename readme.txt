@@ -68,6 +68,10 @@ If you value this plugin, *please donate* to ensure that it may continue to be m
 
 = Changelog =
 
+*2008-11-03: 0.9.2*
+
+* Updated error message to include results for <code>wp_upload_dir()</code>
+
 *2008-09-22: 0.9.1*
 
 * Updated error messages to be more helpful (includes the paths in question). This will help debug some of the issues that have been raised on the forums lately.

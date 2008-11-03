@@ -3,7 +3,7 @@
 Plugin Name: User Photo
 Plugin URI: http://wordpress.org/extend/plugins/user-photo/
 Description: Allows users to associate photos with their accounts by accessing their "Your Profile" page. Uploaded images are resized to fit the dimensions specified on the options page; a thumbnail image is also generated. New template tags introduced are: <code>userphoto_the_author_photo</code>, <code>userphoto_the_author_thumbnail</code>, <code>userphoto_comment_author_photo</code>, and <code>userphoto_comment_author_thumbnail</code>. Uploaded images may be moderated by administrators.
-Version: 0.9.1
+Version: 0.9.2
 Author: Weston Ruter
 Author URI: http://weston.ruter.net/
 Copyright: 2008, Weston Ruter
@@ -406,8 +406,8 @@ function userphoto_profile_update($userID){
 				$dir = trailingslashit($upload_dir['basedir']) . 'userphoto';
 				
 				#$umask = umask(0);
-				if(!file_exists($dir) && !mkdir($dir, 0777))
-					$error = sprintf(__("The userphoto upload content directory does not exist and could not be created. Please ensure that you have write permissions for the %s directory. Did you put slash at the beginning of the upload path in Misc. settings? It should be a path relative to the WordPress root directory.", 'user-photo'), $dir);
+				if(!file_exists($dir) && @!mkdir($dir, 0777))
+					$error = sprintf(__("The userphoto upload content directory does not exist and could not be created. Please ensure that you have write permissions for the '%s' directory. Did you put slash at the beginning of the upload path in Misc. settings? It should be a path relative to the WordPress root directory. <code>wp_upload_dir()</code> returned:<br /> <code style='white-space:pre'>%s</code>", 'user-photo'), $dir, print_r($upload_dir, true));
 				#umask($umask);
 				
 				if(!$error){
@@ -892,4 +892,3 @@ function userphoto_resize_image($filename, $newFilename, $maxdimension, &$error)
 	return true;
 }
 
-?>
