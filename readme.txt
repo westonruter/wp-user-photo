@@ -3,11 +3,12 @@ Contributors: westonruter
 Tags: users, photos, images
 Tested up to: 2.6.2
 Stable tag: trunk
-Donate link: http://weston.ruter.net/donate/
 
 Allows a user to associate a photo with their account and for this photo to be displayed in their posts and comments.
 
 == Description ==
+
+*This plugin is developed at [Shepherd Interactive](http://www.shepherd-interactive.com/ "Shepherd Interactive specializes in web design and development in Portland, Oregon") for the benefit of the community.*
 
 Allows a user to associate a profile photo with their account through their "Your Profile" page. Admins may 
 add a user profile photo by accessing the "Edit User" page. Uploaded images are resized to fit the dimensions specified 
@@ -67,6 +68,10 @@ Localizations included for Spanish, German, Dutch, Polish, and Russian.
 If you value this plugin, *please donate* to ensure that it may continue to be maintained and improved.
 
 = Changelog =
+
+*2008-11-14: 0.9.3*
+
+* Forcing the uploaded filename to lower-case
 
 *2008-11-03: 0.9.2*
 

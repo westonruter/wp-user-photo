@@ -2,11 +2,11 @@
 /*
 Plugin Name: User Photo
 Plugin URI: http://wordpress.org/extend/plugins/user-photo/
-Description: Allows users to associate photos with their accounts by accessing their "Your Profile" page. Uploaded images are resized to fit the dimensions specified on the options page; a thumbnail image is also generated. New template tags introduced are: <code>userphoto_the_author_photo</code>, <code>userphoto_the_author_thumbnail</code>, <code>userphoto_comment_author_photo</code>, and <code>userphoto_comment_author_thumbnail</code>. Uploaded images may be moderated by administrators.
-Version: 0.9.2
-Author: Weston Ruter
+Description: Allows users to associate photos with their accounts by accessing their "Your Profile" page. Uploaded images are resized to fit the dimensions specified on the options page; a thumbnail image is also generated. New template tags introduced are: <code>userphoto_the_author_photo</code>, <code>userphoto_the_author_thumbnail</code>, <code>userphoto_comment_author_photo</code>, and <code>userphoto_comment_author_thumbnail</code>. Uploaded images may be moderated by administrators. <em>This plugin is developed at <a href="http://www.shepherd-interactive.com/" title="Shepherd Interactive specializes in web design and development in Portland, Oregon">Shepherd Interactive</a> for the benefit of the community.</em>
+Version: 0.9.3
+Author: Weston Ruter, Shepherd Interactive
 Author URI: http://weston.ruter.net/
-Copyright: 2008, Weston Ruter
+Copyright: 2008, Weston Ruter, Shepherd Interactive
 
 GNU General Public License, Free Software Foundation <http://creativecommons.org/licenses/GPL/2.0/>
 This program is free software; you can redistribute it and/or modify
@@ -412,7 +412,7 @@ function userphoto_profile_update($userID){
 				
 				if(!$error){
 					#$oldFile = basename($userdata->userphoto_image_file);
-					$imagefile = preg_replace('/^.+(?=\.\w+$)/', $userdata->user_nicename, $_FILES['userphoto_image_file']['name']);
+					$imagefile = preg_replace('/^.+(?=\.\w+$)/', $userdata->user_nicename, strtolower($_FILES['userphoto_image_file']['name']));
 					$imagepath = $dir . '/' . $imagefile;
 					$thumbfile = preg_replace("/(?=\.\w+$)/", '.thumbnail', $imagefile);
 					$thumbpath = $dir . '/' . $thumbfile;
