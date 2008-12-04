@@ -3,8 +3,8 @@
 Plugin Name: User Photo
 Plugin URI: http://wordpress.org/extend/plugins/user-photo/
 Description: Allows users to associate photos with their accounts by accessing their "Your Profile" page. Uploaded images are resized to fit the dimensions specified on the options page; a thumbnail image is also generated. New template tags introduced are: <code>userphoto_the_author_photo</code>, <code>userphoto_the_author_thumbnail</code>, <code>userphoto_comment_author_photo</code>, and <code>userphoto_comment_author_thumbnail</code>. Uploaded images may be moderated by administrators. <em>This plugin is developed at <a href="http://www.shepherd-interactive.com/" title="Shepherd Interactive specializes in web design and development in Portland, Oregon">Shepherd Interactive</a> for the benefit of the community.</em>
-Version: 0.9.3
-Author: Weston Ruter, Shepherd Interactive
+Version: 0.9.4
+Author: Weston Ruter
 Author URI: http://weston.ruter.net/
 Copyright: 2008, Weston Ruter, Shepherd Interactive
 
@@ -126,6 +126,8 @@ function userphoto__get_userphoto($user_id, $photoSize, $before, $after, $attrib
 			$height = $photoSize == USERPHOTO_FULL_SIZE ? $userdata->userphoto_image_height : $userdata->userphoto_thumb_height;
 			
 			$upload_dir = wp_upload_dir();
+			if(!empty($upload_dir['error']))
+				return "Error: " . $upload_dir['error'];
 			$src = trailingslashit($upload_dir['baseurl']) . 'userphoto/' . $image_file;
 		}
 		else if($default_src){

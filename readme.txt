@@ -21,6 +21,7 @@ help identify the author. New template tags introduced are:
 *   <code>userphoto_comment_author_photo()</code>
 *   <code>userphoto_comment_author_thumbnail()</code>
 
+*Important: all of these "template tags" must appear inside of PHP script blocks (see examples below).*
 The first two should be placed in the posts loop near <code>the_author()</code>, and the second two in the comments
 loop near <code>comment_author()</code> (or their respective equivalents). Furthermore, <code>userphoto_the_author_photo()</code>
 and <code>userphoto_the_author_thumbnail()</code> may be called anywhere (i.e. sidebar) if <code>$authordata</code> is set.
@@ -36,28 +37,73 @@ Just added in 0.8.1 release are these two new template tags:
 *   <code>userphoto_thumbnail($user, $before = '', $after = '', $attributes = array(), $default_src = '')</code>
 
 By using these, it is uneccessary to set the global <code>$authordata</code> to display a photo. Just pass <code>$authordata</code>, <code>$curauth</code> or
-whatever variable you have which contains the user object, or (as of version 0.9), pass in a user ID or a user login name. Also in version 0.9 the
-boolean function `userphoto_exists($user)` has been introduced which returns true if the user has a photo and false if they do not.
+whatever variable you have which contains the user object, or (as of version 0.9), pass in a user ID or a user login name.
+
+Here's an example that shows a few ways of inserting a user's photo into the post loop:
+	//this will display the user's avatar if they don't have a user photo,
+
+	<?php while (have_posts()) : the_post(); ?>
+		<div class="post" id="post-<?php the_ID(); ?>">
+			<h2><a href="<?php the_permalink() ?>"><?php the_title(); ?></a></h2>
+			<div class="meta">
+				<?php the_time('F jS, Y') ?>
+				by <?php the_author() ?>
+				
+				<!-- displays the user's photo and then thumbnail -->
+				<?php userphoto_the_author_photo() ?>
+				<?php userphoto_the_author_thumbnail() ?>
+				
+				<!-- the following two do the same since $authordata populated -->
+				<?php userphoto($authordata) ?>
+				<?php userphoto_thumbnail($authordata) ?>
+				
+				<!-- and this is how to customize the output -->
+				<?php userphoto_the_author_photo(
+					'<b>Photo of me: ',
+					'</b>',
+					array('class' => 'photo'),
+					get_template_directory_uri() . '/nophoto.jpg'
+				) ?>
+			</div>
+			<?php the_content('Read the rest of this entry &raquo;'); ?>
+		</div>
+	<?php endwhile; ?>
+
+If you want to display the user's photo in the sidebar, just get the user ID or object and pass it into <code>userphoto()</code> or <code>userphoto_thumbnail()</code> like this:
+
+	<?php userphoto($posts[0]->post_author); ?>
+
+If you want to display a user's photo their author page, you may do this:
+
+	<?php userphoto($wp_query->get_queried_object()) ?>
+
+In version 0.9 the boolean function `userphoto_exists($user)` has been introduced which returns true if the user has a photo and false if they do not.
 Argument `$user` may be user object, ID, or login name. This function can be used along with avatars:
 
+	<?php
 	if(userphoto_exists($user))
 		userphoto($user);
 	else
 		echo get_avatar($user->ID, 96);
+	?>
 
 Or if the new "Serve Avatar as Fallback" option is turned on, then the avatar will be served by any of the regular calls to display the user photo:
 
+	<?php
 	//this will display the user's avatar if they don't have a user photo,
 	//  and if "Serve Avatar as Fallback" is turned on
 	userphoto($user);
+	?>
 
 Additionally, all of the regular function calls to display the user photo may be done away with alltogether if the new "Override Avatar with User Photo"
 option is enabled:
 
+	<?php
 	//both will display the user photo if it exists
 	//  and if "Override Avatar with User Photo" is turned on
 	echo get_avatar($user_id);
 	echo get_avatar($user->user_email);
+	?>
 
 Both options "Serve Avatar as Fallback" and "Override Avatar with User Photo" require that the 'Avatar Display' setting under Discussion be set to "Show". 
 
@@ -68,6 +114,10 @@ Localizations included for Spanish, German, Dutch, Polish, and Russian.
 If you value this plugin, *please donate* to ensure that it may continue to be maintained and improved.
 
 = Changelog =
+
+*2008-11-14: 0.9.4*
+
+* Noew displaying error message if <code>wp_upload_dir()</code> fails when trying to display a user photo.
 
 *2008-11-14: 0.9.3*
 
