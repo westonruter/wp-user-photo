@@ -109,15 +109,19 @@ Both options "Serve Avatar as Fallback" and "Override Avatar with User Photo" re
 
 Uploaded images may be moderated by administrators via the "Edit User" page.
 
-Localizations included for Spanish, German, Dutch, Polish, and Russian.
+Localizations included for Spanish, German, Dutch, Polish, Russian, and French.
 
 If you value this plugin, *please donate* to ensure that it may continue to be maintained and improved.
 
 = Changelog =
 
+*2008-12-11*
+
+* Added French localization. Thanks Jean-Pierre!
+
 *2008-11-14: 0.9.4*
 
-* Noew displaying error message if <code>wp_upload_dir()</code> fails when trying to display a user photo.
+* Now displaying error message if <code>wp_upload_dir()</code> fails when trying to display a user photo.
 
 *2008-11-14: 0.9.3*
 
