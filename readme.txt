@@ -1,7 +1,7 @@
 === User Photo ===
 Contributors: westonruter
 Tags: users, photos, images
-Tested up to: 2.6.2
+Tested up to: 2.7
 Stable tag: trunk
 
 Allows a user to associate a photo with their account and for this photo to be displayed in their posts and comments.
