@@ -109,11 +109,15 @@ Both options "Serve Avatar as Fallback" and "Override Avatar with User Photo" re
 
 Uploaded images may be moderated by administrators via the "Edit User" page.
 
-Localizations included for Spanish, German, Dutch, Polish, Russian, French, Hungarian, Brazilian Portuguese, and Italian.
+Localizations included for Spanish, German, Dutch, Polish, Russian, French, Hungarian, Brazilian Portuguese, Italian, and Catalan.
 
 If you value this plugin, *please donate* to ensure that it may continue to be maintained and improved.
 
 = Changelog =
+
+*2009-02-13*
+
+* Added Catalan localization. Thanks Robert!
 
 *2009-02-28*
 
