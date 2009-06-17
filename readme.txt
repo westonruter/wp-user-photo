@@ -8,7 +8,7 @@ Allows a user to associate a photo with their account and for this photo to be d
 
 == Description ==
 
-*This plugin is developed at [Shepherd Interactive](http://www.shepherd-interactive.com/ "Shepherd Interactive specializes in web design and development in Portland, Oregon") for the benefit of the community.*
+*Notice: This plugin is not being actively maintained. Other priorities have arisen which have forced development to discontinue. Being open source and free, you are of course free to take the code and improve upon it; if you are a developer and would like to be added as a commiter to this plugin, please (contact me)[http://weston.ruter.net/contact/].*
 
 Allows a user to associate a profile photo with their account through their "Your Profile" page. Admins may 
 add a user profile photo by accessing the "Edit User" page. Uploaded images are resized to fit the dimensions specified 
