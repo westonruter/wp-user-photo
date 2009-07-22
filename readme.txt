@@ -1,5 +1,5 @@
 === User Photo ===
-Contributors: westonruter
+Contributors: westonruter, cptnwinky
 Tags: users, photos, images
 Tested up to: 2.7
 Stable tag: trunk
