@@ -2,7 +2,7 @@
 Contributors: cptnwinky, westonruter
 Tags: users, photos, images
 Tested up to: 2.7
-Stable tag: trunk
+Stable tag: 0.9.4
 
 Allows a user to associate a photo with their account and for this photo to be displayed in their posts and comments.
 
