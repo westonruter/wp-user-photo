@@ -1,5 +1,5 @@
 === User Photo ===
-Contributors: westonruter, cptnwinky
+Contributors: cptnwinky, westonruter
 Tags: users, photos, images
 Tested up to: 2.7
 Stable tag: trunk
@@ -7,8 +7,6 @@ Stable tag: trunk
 Allows a user to associate a photo with their account and for this photo to be displayed in their posts and comments.
 
 == Description ==
-
-*Notice: This plugin is not being actively maintained. Other priorities have arisen which have forced development to discontinue. Being open source and free, you are of course free to take the code and improve upon it; if you are a developer and would like to be added as a commiter to this plugin, please [contact me](http://weston.ruter.net/contact/).*
 
 Allows a user to associate a profile photo with their account through their "Your Profile" page. Admins may 
 add a user profile photo by accessing the "Edit User" page. Uploaded images are resized to fit the dimensions specified 
@@ -113,45 +111,45 @@ Localizations included for Spanish, German, Dutch, Polish, Russian, French, Hung
 
 If you value this plugin, *please donate* to ensure that it may continue to be maintained and improved.
 
-= Changelog =
+== Changelog ==
 
-*2009-02-13*
+= 2009-02-13 =
 
 * Added Catalan localization. Thanks Robert!
 
-*2009-02-28*
+*2009-02-28 =
 
 * Added Italian localization. Thanks Federico!
 
-*2009-02-17*
+= 2009-02-17 =
 
 * Added Brazilian Portuguese localization. Thanks gui!
 
-*2009-01-07*
+= 2009-01-07 =
 
 * Added Hungarian localization. Thanks Csaba!
 
-*2008-12-11*
+= 2008-12-11 =
 
 * Added French localization. Thanks Jean-Pierre!
 
-*2008-11-14: 0.9.4*
+= 2008-11-14: 0.9.4 =
 
 * Now displaying error message if <code>wp_upload_dir()</code> fails when trying to display a user photo.
 
-*2008-11-14: 0.9.3*
+= 2008-11-14: 0.9.3 =
 
 * Forcing the uploaded filename to lower-case
 
-*2008-11-03: 0.9.2*
+= 2008-11-03: 0.9.2 =
 
 * Updated error message to include results for <code>wp_upload_dir()</code>
 
-*2008-09-22: 0.9.1*
+= 2008-09-22: 0.9.1 =
 
 * Updated error messages to be more helpful (includes the paths in question). This will help debug some of the issues that have been raised on the forums lately.
 
-*2008-09-22: 0.9*
+= 2008-09-22: 0.9 =
 
 * First argument to `userphoto()` and `userphoto_thumbnail()` may now just be a user ID or user login name in addition to a user object.
 * New "Serve Avatar as Fallback" option; this is disabled by default.
@@ -161,71 +159,71 @@ If you value this plugin, *please donate* to ensure that it may continue to be m
 * Fixed issue where thumbnail (and associated usermeta) wasn't being deleted along with the full-size photo (thanks Oliver).
 * Now using `wp_upload_dir()` to get the basedir for where the userphoto directory will be located. 
 
-*2008-08-01: 0.8.2*
+= 2008-08-01: 0.8.2 =
 
 * Verified that works in WP 2.6; added note explaining what the error message regarding what "image resizing not available" means... namely that the GD module is not installed.
 
-*2008-05-29: 0.8.1*
+= 2008-05-29: 0.8.1 =
 
 * Added localization for Russian (thanks Kyr!)
 
-*2008-05-17: 0.8.1*
+= 2008-05-17: 0.8.1 =
 
 * Finally updated the plugin for WP 2.5. Note that it still worked for 2.5, it's just the admin interfaces needed to be updated. Also added <code>userphoto()</code> and <code>userphoto_thumbnail()</code> template tags.
 
-*2008-04-23: 0.8.0.5*
+= 2008-04-23: 0.8.0.5 =
 
 * Added localization for Polish (thanks Maciej!)
 
-*2008-04-04: 0.8.0.4*
+= 2008-04-04: 0.8.0.4 =
 
 * Fixed issue where incorrect path was being generated for default photo.
 
-*2008-04-04: 0.8.0.3*
+= 2008-04-04: 0.8.0.3 =
 
 * Using `wp_mail` instead of `mail` (Thanks again, Kyle.)
 
-*2008-03-28: 0.8.0.2b*
+= 2008-03-28: 0.8.0.2b =
 
 * Ensured that "unapproved" photos are not displayed. (Thanks Kyle.)
 
-*2008-02-24: 0.8.0.2*
+= 2008-02-24: 0.8.0.2 =
 
 * Made minor improvement to security.
 
-*2008-02-13: 0.8.0.1*
+= 2008-02-13: 0.8.0.1 =
 
 * Removed <code>print_r()</code> from being called when using <code>$default_src</code> (thanks David!)
 
-*2008-02-04: 0.8*
+= 2008-02-04: 0.8 =
 
 * Allow before and after text to be outputted when there is a user photo.
 * Allow attributes to be passed into template tags, including a default SRC value to be used when there is no user photo.
 * Added Dutch localization translated by Joep Stender (thanks!)
 
-*2008-01-07: 0.7.4b*
+= 2008-01-07: 0.7.4b =
 
 * Added German localization translated by Robert Harm (thanks!)
 
-*2008-01-06: 0.7.4*
+= 2008-01-06: 0.7.4 =
 
 * Added support for localization and added Spanish localization translated by Pakus (thanks!)
 
-*2008-01-02: 0.7.3*
+= 2008-01-02: 0.7.3 =
 
 * Fixed issue where the post author photo was inadvertently used for non-registered comment author photos.
 
-*2007-12-28: 0.7.2*
+= 2007-12-28: 0.7.2 =
 
 * Improved error message raised when unable to create 'userphoto' directory under /wp-content/uploads/. It now asks about whether write-permissions are set for the directory.
 * Improved the plugin activation handler.
 * All uploaded images are now explicitly set to chmod 666.
 
-*2007-12-22: 0.7.1*
+= 2007-12-22: 0.7.1 =
 
 * All functions (and template tags) now are prefixed with "userphoto_"
 
-*2007-12-18: 0.7.0.1*
+= 2007-12-18: 0.7.0.1 =
 
 * Now using `siteurl` option instead of `home` option
 * Fixed the inclusion of the stylesheet for the options page
