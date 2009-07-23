@@ -414,8 +414,10 @@ function userphoto_profile_update($userID){
 				#umask($umask);
 				
 				if(!$error){
-					#$oldFile = basename($userdata->userphoto_image_file);
-					$imagefile = preg_replace('/^.+(?=\.\w+$)/', $userdata->user_nicename, strtolower($_FILES['userphoto_image_file']['name']));
+					$oldimagefile = basename($userdata->userphoto_image_file);
+					$oldthumbfile = basename($userdata->userphoto_thumb_file);
+					#$imagefile = preg_replace('/^.+(?=\.\w+$)/', $userdata->user_nicename, strtolower($_FILES['userphoto_image_file']['name']));
+					$imagefile = "$userID." . preg_replace('{^.+?\.(?=\w+$)}', '', strtolower($_FILES['userphoto_image_file']['name']));
 					$imagepath = $dir . '/' . $imagefile;
 					$thumbfile = preg_replace("/(?=\.\w+$)/", '.thumbnail', $imagefile);
 					$thumbpath = $dir . '/' . $thumbfile;
@@ -460,9 +462,12 @@ function userphoto_profile_update($userID){
 						update_usermeta($userID, "userphoto_thumb_file", $thumbfile);
 						update_usermeta($userID, "userphoto_thumb_width", $thumbinfo[0]);
 						update_usermeta($userID, "userphoto_thumb_height", $thumbinfo[1]);
-			
-						#if($oldFile && $oldFile != $newFile)
-						#	@unlink($dir . '/' . $oldFile);
+						
+						//Delete old thumbnail if it has a different filename (extension)
+						if($oldimagefile != $imagefile)
+							@unlink($dir . '/' . $oldimagefile);
+						if($oldthumbfile != $thumbfile)
+							@unlink($dir . '/' . $oldthumbfile);
 					}
 				}
 			}
