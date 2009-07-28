@@ -450,7 +450,7 @@ function userphoto_profile_update($userID){
 								$admin = get_userdata($admin_notified);
 								@wp_mail($admin->user_email,
 								         "User Photo for " . $userdata->display_name . " Needs Approval",
-								         get_option("home") . "/wp-admin/user-edit.php?user_id=" . $userdata->ID . "#userphoto");
+								         get_option("siteurl") . "/wp-admin/user-edit.php?user_id=" . $userdata->ID . "#userphoto");
 							}
 						}
 						else {
