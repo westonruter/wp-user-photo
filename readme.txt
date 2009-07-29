@@ -113,6 +113,10 @@ If you value this plugin, *please donate* to ensure that it may continue to be m
 
 == Changelog ==
 
+= 2009-7-28 =
+
+* Fixed a small bug relating to line 453 changing "home" to "siteurl". Thanks Piotr!
+
 = 2009-02-13 =
 
 * Added Catalan localization. Thanks Robert!
