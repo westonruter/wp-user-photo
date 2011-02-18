@@ -1,5 +1,5 @@
 === User Photo ===
-Contributors: cptnwinky, westonruter
+Contributors: westonruter
 Tags: users, photos, images
 Tested up to: 3.0.5
 Stable tag: 0.9.5
