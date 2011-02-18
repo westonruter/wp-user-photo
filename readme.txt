@@ -2,7 +2,7 @@
 Contributors: westonruter
 Tags: users, photos, images
 Tested up to: 3.0.5
-Stable tag: 0.9.5
+Stable tag: 0.9.5.1
 
 Allows a user to associate a photo with their account and for this photo to be displayed in their posts and comments.
 
