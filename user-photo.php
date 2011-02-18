@@ -3,7 +3,7 @@
 Plugin Name: User Photo
 Plugin URI: http://wordpress.org/extend/plugins/user-photo/
 Description: Allows users to associate photos with their accounts by accessing their "Your Profile" page. Uploaded images are resized to fit the dimensions specified on the options page; a thumbnail image is also generated. New template tags introduced are: <code>userphoto_the_author_photo</code>, <code>userphoto_the_author_thumbnail</code>, <code>userphoto_comment_author_photo</code>, and <code>userphoto_comment_author_thumbnail</code>. Uploaded images may be moderated by administrators.
-Version: 0.9.4
+Version: 0.9.5
 Author: <a href="http://weston.ruter.net/">Weston Ruter</a>, <a href="http://dev.dave-wagner.com/">Dave Wagner's Dev Site</a>
 
 Original code by Weston Ruter <http://weston.ruter.net> at Shepherd Interactive <http://shepherd-interactive.com>.
@@ -47,6 +47,7 @@ $userphoto_validtypes = array(
 	"image/png" => true,
 	"image/x-png" => true
 );
+$userphoto_validextensions = array('jpeg', 'jpg', 'gif', 'png');
 
 define('USERPHOTO_PENDING', 0);
 define('USERPHOTO_REJECTED', 1);
@@ -316,6 +317,7 @@ function userphoto_thumbnail($user, $before = '', $after = '', $attributes = arr
 
 function userphoto_profile_update($userID){
 	global $userphoto_validtypes;
+	global $userphoto_validextensions;
 	global $current_user;
 	
 	$userdata = get_userdata($userID);
@@ -376,10 +378,15 @@ function userphoto_profile_update($userID){
 						$error = __("File upload failed due to unknown error.", 'user-photo');
 				}
 			}
-			else if(!$_FILES['userphoto_image_file']['size'])
+			else if( !$_FILES['userphoto_image_file']['size'] ){
 				$error = sprintf(__("The file &ldquo;%s&rdquo; was not uploaded. Did you provide the correct filename?", 'user-photo'), $_FILES['userphoto_image_file']['name']);
-			else if(@!$userphoto_validtypes[$_FILES['userphoto_image_file']['type']]) //!preg_match("/\.(" . join('|', $userphoto_validextensions) . ")$/i", $_FILES['userphoto_image_file']['name'])) ||
+			}
+			else if( !preg_match("/\.(" . join('|', $userphoto_validextensions) . ")$/i", $_FILES['userphoto_image_file']['name']) ){
+				$error = sprintf(__("The file extension &ldquo;%s&rdquo; is not allowed. Must be one of: %s.", 'user-photo'), preg_replace('/.*\./', '', $_FILES['userphoto_image_file']['name']), join(', ', $userphoto_validextensions));
+			}
+			else if( @!$userphoto_validtypes[$_FILES['userphoto_image_file']['type']] ){
 				$error = sprintf(__("The uploaded file type &ldquo;%s&rdquo; is not allowed.", 'user-photo'), $_FILES['userphoto_image_file']['type']);
+			}
 			
 			$tmppath = $_FILES['userphoto_image_file']['tmp_name'];
 			
