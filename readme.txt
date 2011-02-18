@@ -26,8 +26,8 @@ The first two should be placed in the posts loop near <code>the_author()</code>,
 loop near <code>comment_author()</code> (or their respective equivalents). Furthermore, <code>userphoto_the_author_photo()</code>
 and <code>userphoto_the_author_thumbnail()</code> may be called anywhere (i.e. sidebar) if <code>$authordata</code> is set.
 
-The output of these template tags may be modified by passing four parameters: <code>$before</code>, <code>$after</code>,
-<code>$attributes</code>, and <code>$default_src</code>, as in: <code>userphoto_the_author_photo($before, $after, $attributes, $default_src)</code>.
+The output of these template tags may be modified by passing four parameters: `$before`, `$after`, `$attributes`, and `$default_src`,
+as in: <code>userphoto_the_author_photo($before, $after, $attributes, $default_src)</code>.
 If the user photo exists (or <code>$default_src</code> is supplied), then the text provided in the <code>$before</code> and <code>$after</code> parameters is respectively
 prefixed and suffixed to the generated <code>img</code> tag (a common pattern in WordPress). If attributes are provided in the <code>$attributes</code>
 parameter, then they are returned as attributes of the generated <code>img</code> element. For example: <code>userphoto_the_author_photo('', '', array(style => 'border:0'))</code>
