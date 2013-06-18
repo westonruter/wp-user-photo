@@ -668,7 +668,7 @@ add_action('edit_user_profile', 'userphoto_display_selector_fieldset');
 
 function userphoto_add_page() {
 	//if (function_exists('add_options_page'))
-	add_options_page('User Photo', 'User Photo', 8, __FILE__, 'userphoto_options_page');
+	add_options_page( 'User Photo', 'User Photo', 'manage_options', __FILE__, 'userphoto_options_page' );
 }
 add_action('admin_menu', 'userphoto_add_page');
 
