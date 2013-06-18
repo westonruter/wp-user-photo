@@ -74,7 +74,7 @@ $userphoto_prevent_override_avatar = false;
 
 # Load up the localization file if we're using WordPress in a different language
 # Place it in the "localization" folder and name it "user-photo-[value in wp-config].mo"
-load_plugin_textdomain('user-photo', PLUGINDIR . '/user-photo/localization'); #(thanks Pakus)
+load_plugin_textdomain( 'user-photo', false, dirname( plugin_basename( __FILE__ ) ) . '/localization' );
 
 function userphoto__init(){
 	if(get_option('userphoto_override_avatar') && !is_admin())
