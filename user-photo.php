@@ -100,7 +100,7 @@ function userphoto_filter_get_avatar($avatar, $id_or_email, $size, $default){
 	if(is_numeric($id_or_email))
 		$userid = (int)$id_or_email;
 	else if(is_string($id_or_email))
-		$userid = (int)$wpdb->get_var("SELECT ID FROM $wpdb->users WHERE user_email = '" . mysql_escape_string($id_or_email) . "'");
+		$userid = (int)$wpdb->get_var($wpdb->prepare("SELECT ID FROM $wpdb->users WHERE user_email = '%s'", $id_or_email));
 	
 	if(!$userid)
 		return $avatar;
